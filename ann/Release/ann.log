@@ -1,0 +1,117 @@
+﻿Build started 8/19/2013 11:12:47 AM.
+     1>Project "C:\Users\Dipanjan\Documents\Visual Studio 2012\Projects\ann\ann\ann.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Release\ann.pch" /Fo"Release\\" /Fd"Release\vc110.pdb" /FR"Release\\" /Gd /TP /analyze- /errorReport:prompt FeatureSet.cpp PerceptronLayer.cpp ann.cpp network.cpp
+         FeatureSet.cpp
+         PerceptronLayer.cpp
+         ann.cpp
+     1>c:\users\dipanjan\documents\visual studio 2012\projects\ann\ann\PerceptronLayer.h(35): warning C4018: '<' : signed/unsigned mismatch
+                 c:\users\dipanjan\documents\visual studio 2012\projects\ann\ann\PerceptronLayer.h(29) : while compiling class template member function 'PerceptronLayer<T>::PerceptronLayer(void)'
+                 with
+                 [
+                     T=int
+                 ]
+                 ann.cpp(83) : see reference to function template instantiation 'PerceptronLayer<T>::PerceptronLayer(void)' being compiled
+                 with
+                 [
+                     T=int
+                 ]
+                 c:\users\dipanjan\documents\visual studio 2012\projects\ann\ann\PerceptronLayer.h(437) : see reference to class template instantiation 'PerceptronLayer<T>' being compiled
+                 with
+                 [
+                     T=int
+                 ]
+     1>c:\users\dipanjan\documents\visual studio 2012\projects\ann\ann\PerceptronLayer.h(359): warning C4018: '<' : signed/unsigned mismatch
+                 c:\users\dipanjan\documents\visual studio 2012\projects\ann\ann\PerceptronLayer.h(358) : while compiling class template member function 'void PerceptronLayer<T>::propagate(void)'
+                 with
+                 [
+                     T=int
+                 ]
+                 c:\users\dipanjan\documents\visual studio 2012\projects\ann\ann\PerceptronLayer.h(119) : see reference to function template instantiation 'void PerceptronLayer<T>::propagate(void)' being compiled
+                 with
+                 [
+                     T=int
+                 ]
+     1>c:\users\dipanjan\documents\visual studio 2012\projects\ann\ann\FeatureSet.h(102): warning C4172: returning address of local variable or temporary
+                 c:\users\dipanjan\documents\visual studio 2012\projects\ann\ann\FeatureSet.h(99) : while compiling class template member function 'FeatureSet<T> &FeatureSet<T>::operator =(FeatureSet<T>)'
+                 with
+                 [
+                     T=int
+                 ]
+                 c:\users\dipanjan\documents\visual studio 2012\projects\ann\ann\PerceptronLayer.h(117) : see reference to function template instantiation 'FeatureSet<T> &FeatureSet<T>::operator =(FeatureSet<T>)' being compiled
+                 with
+                 [
+                     T=int
+                 ]
+                 c:\users\dipanjan\documents\visual studio 2012\projects\ann\ann\PerceptronLayer.h(182) : see reference to class template instantiation 'FeatureSet<T>' being compiled
+                 with
+                 [
+                     T=int
+                 ]
+     1>c:\users\dipanjan\documents\visual studio 2012\projects\ann\ann\FeatureSet.h(165): warning C4018: '<' : signed/unsigned mismatch
+                 c:\users\dipanjan\documents\visual studio 2012\projects\ann\ann\FeatureSet.h(164) : while compiling class template member function 'void FeatureSet<T>::combine(FeatureSet<T>)'
+                 with
+                 [
+                     T=int
+                 ]
+                 c:\users\dipanjan\documents\visual studio 2012\projects\ann\ann\PerceptronLayer.h(37) : see reference to function template instantiation 'void FeatureSet<T>::combine(FeatureSet<T>)' being compiled
+                 with
+                 [
+                     T=int
+                 ]
+     1>c:\users\dipanjan\documents\visual studio 2012\projects\ann\ann\PerceptronLayer.h(392): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
+                 c:\users\dipanjan\documents\visual studio 2012\projects\ann\ann\PerceptronLayer.h(390) : while compiling class template member function 'int PerceptronLayer<T>::generateTid(void)'
+                 with
+                 [
+                     T=int
+                 ]
+                 c:\users\dipanjan\documents\visual studio 2012\projects\ann\ann\PerceptronLayer.h(361) : see reference to function template instantiation 'int PerceptronLayer<T>::generateTid(void)' being compiled
+                 with
+                 [
+                     T=int
+                 ]
+     1>c:\users\dipanjan\documents\visual studio 2012\projects\ann\ann\PerceptronLayer.h(227): warning C4018: '<' : signed/unsigned mismatch
+                 c:\users\dipanjan\documents\visual studio 2012\projects\ann\ann\PerceptronLayer.h(225) : while compiling class template member function 'void PerceptronLayer<T>::checkDep(void)'
+                 with
+                 [
+                     T=int
+                 ]
+                 c:\users\dipanjan\documents\visual studio 2012\projects\ann\ann\PerceptronLayer.h(425) : see reference to function template instantiation 'void PerceptronLayer<T>::checkDep(void)' being compiled
+                 with
+                 [
+                     T=int
+                 ]
+     1>c:\users\dipanjan\documents\visual studio 2012\projects\ann\ann\PerceptronLayer.h(261): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\dipanjan\documents\visual studio 2012\projects\ann\ann\PerceptronLayer.h(285): warning C4018: '<' : signed/unsigned mismatch
+                 c:\users\dipanjan\documents\visual studio 2012\projects\ann\ann\PerceptronLayer.h(282) : while compiling class template member function 'void PerceptronLayer<T>::accumulate(void)'
+                 with
+                 [
+                     T=int
+                 ]
+                 c:\users\dipanjan\documents\visual studio 2012\projects\ann\ann\PerceptronLayer.h(426) : see reference to function template instantiation 'void PerceptronLayer<T>::accumulate(void)' being compiled
+                 with
+                 [
+                     T=int
+                 ]
+         network.cpp
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Dipanjan\Documents\Visual Studio 2012\Projects\ann\Release\ann.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Dipanjan\Documents\Visual Studio 2012\Projects\ann\Release\ann.pdb" /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Dipanjan\Documents\Visual Studio 2012\Projects\ann\Release\ann.lib" /MACHINE:X86 /SAFESEH Release\ann.obj
+         Release\calculation.obj
+         Release\Feature.obj
+         Release\FeatureSet.obj
+         Release\Iterator.obj
+         Release\network.obj
+         Release\Perceptron.obj
+         Release\PerceptronLayer.obj
+         Release\stdafx.obj
+         Release\unit.obj
+         Generating code
+         Finished generating code
+         ann.vcxproj -> C:\Users\Dipanjan\Documents\Visual Studio 2012\Projects\ann\Release\ann.exe
+       BscMake:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\bscmake.exe /nologo /o"C:\Users\Dipanjan\Documents\Visual Studio 2012\Projects\ann\Release\ann.bsc" /n Release\ann.sbr Release\calculation.sbr Release\Feature.sbr Release\FeatureSet.sbr Release\Iterator.sbr Release\network.sbr Release\Perceptron.sbr Release\PerceptronLayer.sbr Release\stdafx.sbr Release\unit.sbr
+     1>Done Building Project "C:\Users\Dipanjan\Documents\Visual Studio 2012\Projects\ann\ann\ann.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:21.86

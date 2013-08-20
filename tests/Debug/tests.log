@@ -1,0 +1,25 @@
+﻿Build started 8/19/2013 2:19:59 PM.
+     1>Project "C:\Users\Dipanjan\Documents\Visual Studio 2012\Projects\ann\tests\tests.vcxproj" on node 3 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\UnitTest\include" /I"C:\Users\Dipanjan\Documents\Visual Studio 2012\Projects\ann\\" /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDLL /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\tests.pch" /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /FC /errorReport:prompt dataSetTest.cpp
+         dataSetTest.cpp
+     1>c:\users\dipanjan\documents\visual studio 2012\projects\ann\ann\featureset.h(24): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+                 c:\users\dipanjan\documents\visual studio 2012\projects\ann\ann\featureset.h(14) : see reference to class template instantiation 'FeatureSet<T>::iterator' being compiled
+                 c:\users\dipanjan\documents\visual studio 2012\projects\ann\ann\featureset.h(192) : see reference to class template instantiation 'FeatureSet<T>' being compiled
+     1>c:\users\dipanjan\documents\visual studio 2012\projects\ann\ann\featureset.h(24): error C2143: syntax error : missing ',' before '&'
+     1>c:\users\dipanjan\documents\visual studio 2012\projects\ann\tests\datasettest.cpp(61): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\dipanjan\documents\visual studio 2012\projects\ann\tests\datasettest.cpp(64): warning C4620: no postfix form of 'operator ++' found for type 'FeatureSet<T>::iterator', using prefix form
+                 with
+                 [
+                     T=int
+                 ]
+                 c:\users\dipanjan\documents\visual studio 2012\projects\ann\ann\featureset.h(14) : see declaration of 'FeatureSet<T>::iterator'
+                 with
+                 [
+                     T=int
+                 ]
+     1>Done Building Project "C:\Users\Dipanjan\Documents\Visual Studio 2012\Projects\ann\tests\tests.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:02.12
