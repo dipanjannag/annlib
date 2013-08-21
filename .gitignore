@@ -222,3 +222,7 @@ pip-log.txt
 *.exe
 *.dll
 *.obj
+*.cache
+*.sbr
+*.pdb
+*.idb
