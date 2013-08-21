@@ -8,7 +8,7 @@
 /** FeatureSet<T> class: basically a container of many features.
     a perceptron accepts a perceptron layer
 */
-template<typename T> class FeatureSet
+template<typename T> class FeatureSet 
 {
 public:
 	class iterator: public _vSetRndit<T>
@@ -78,6 +78,11 @@ public:
 		{
 			sets.push_back(f[i]);
 		}
+	}
+
+	void init(size_t s,T value)
+	{
+		sets.assign(s,value);
 	}
 	/**
 	this function is not ready

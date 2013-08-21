@@ -17,6 +17,12 @@
 #include <atomic>
 #include <iostream>
 #include "except.h"
+#include "config.h"
+#ifdef USE_AMP
+#include <amp.h>
+#include <amp_math.h>
+using namespace concurrency;
+#endif
 typedef pair<int, future<void> > tEntry;
 using namespace std;
 
@@ -368,9 +374,29 @@ private:
 	/** this function creates the output of the current layer */
 	void calculate()
 	{
+		
 		this->output.clear();
 		this->output = this->input;
 		this->ready = true;
+		
+		/*
+#ifdef USE_AMP
+		input.init(inpDim,0);
+		output.init(outDim,0);
+		int a[100];
+		int b[100];
+		array_view<T,1> inp(input.size(),input);
+		array_view<T,1> out(output.size(),output);
+		int dimn = this->unitDim;
+		parallel_for_each(out.extent,[=](index<1> idx) restrict(amp){
+			for (int i = 0; i < dimn; i++)
+			{
+				out[idx]+=inp[idx+i];
+			}
+		});
+		out.synchronize();
+#endif
+		*/
 		/*
 		if(connectsTo.size()!=0)
 		{
