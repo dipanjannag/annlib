@@ -20,6 +20,10 @@ public:
 		iterator(vector<T>& v) : _vSetRndit(v)
 		{
 		}
+		iterator(vector<T>& v,size_t ofst) : _vSetRndit(v,ofst)
+		{
+		}
+
         // review here
 		/*
 		iterator(const inerator& src,size_t ofst) : _vSetRndit()
@@ -113,6 +117,7 @@ public:
 		}
 	}
     /////////////////////// the below part defines the code required for iterator handling//////////////
+	/*
 	iterator& begin()
 	{
 		return *(new FeatureSet<T>::iterator(sets));
@@ -122,9 +127,33 @@ public:
 		auto temp = *(new iterator(sets));
         return temp;
 	}
-
-
-
+	*/
+	iterator begin()
+	{
+		iterator tmp(this->sets);
+		return tmp;
+	}
+	iterator end()
+	{
+		iterator tmp(this->sets,sets.size());
+		return tmp;
+	}
+	T& operator[] (size_t idx)
+	{
+		return sets[idx];
+	}
+	T& at(size_t idx)
+	{
+		if (idx>=sets.size())
+		{
+			cout<<"error";
+			return NULL;
+		}
+		else
+		{
+			return sets[idx];
+		}
+	}
 
 
 

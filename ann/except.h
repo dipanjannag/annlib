@@ -1,8 +1,10 @@
+/*
 #include <exception>
 #include <string>
 using namespace std;
 enum errTyp{
 	CanNotConnect,
+	FeatureSetOutOfRange
 };
 
 class _excpt : exception
@@ -33,3 +35,4 @@ protected:
 }\
 \
 }
+*/

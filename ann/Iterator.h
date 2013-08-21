@@ -1,6 +1,7 @@
 #pragma once
 #include <iterator>
 #include <vector>
+#include "except.h"
 using namespace std;
 /**_indIt<T> is a custom random access iterator derived from std::iterator. This class is abstract and ony to inherit from std::iterator
 	and to give a prototype how a iterator for ann dataset should be
@@ -16,8 +17,8 @@ public:
 	{
 		pos=s;
 	}
-	virtual T& operator++ () = 0;
-	virtual T& operator-- () = 0;
+	virtual _rndIt& operator++ () = 0;
+	virtual _rndIt& operator-- () = 0;
 	virtual T& operator* () = 0;
 	
 protected:
@@ -54,18 +55,68 @@ public:
 	{
 		pos = 0;
 	}
-	virtual T& operator++ ()
+	_vSetRndit(vector<T>& v,size_t ofst) : setsRef(v)
 	{
-		return setsRef[pos++];
+		pos = ofst;
 	}
-	virtual T& operator-- ()
+	virtual _vSetRndit& operator++ ()
 	{
-		return setsRef[pos--];
+		pos++;
+		return *this;
 	}
+	virtual _vSetRndit<T>& operator-- ()
+	{
+		pos--;
+		return *this;
+	}
+	virtual _vSetRndit<T> operator++ (int)
+	{
+		//auto temp = new _vSetRndit(*this);
+
+		_vSetRndit<T> tlocal(this->setsRef);
+		pos++;
+		return tlocal;
+	}
+	virtual _vSetRndit operator-- (int)
+	{
+		//auto temp = new _vSetRndit(*this);
+		_vSetRndit<T> tlocal(this->setsRef);
+		pos--;
+		return tlocal;
+	}
+
 	virtual T& operator* ()
 	{
-		return setsRef[pos];
+			return setsRef[pos];
 	}
+	virtual _vSetRndit<T>& operator+ (size_t ofst)
+	{
+		pos+=ofst;
+		return *this;
+	}
+	virtual _vSetRndit<T>& operator- (size_t ofst)
+	{
+		pos-=ofst;
+		return *this;
+	}
+
+	virtual bool operator== (_vSetRndit<T>& with)
+	{
+		return pos == with.pos;
+	}
+	virtual bool operator== (_vSetRndit<T>&& val)
+	{
+		return pos == val.pos;
+	}
+	virtual bool operator!= (_vSetRndit<T>& with)
+	{
+		return !(pos==with.pos);
+	}
+	virtual bool operator!= (_vSetRndit<T>&& val)
+	{
+		return !(pos == val.pos);
+	}
+	
 protected:
 	vector<int>& setsRef;
 };

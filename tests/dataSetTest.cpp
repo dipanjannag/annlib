@@ -60,8 +60,20 @@ namespace tests
 			auto itr = a.begin();
 			for(int i(0);i<a.size();i++)
 			{
-				Assert::AreEqual(i,*itr);
+				Assert::AreEqual(i,a[i]);
 				itr++;
+			}
+			int rfs=0;
+			for(auto p(a.begin());p!=a.end();p++)
+			{
+				Assert::AreEqual(rfs,*p);
+				rfs++;
+			}
+			rfs = 4;
+			for(auto p(a.end()-1);p!=a.begin();p--)
+			{
+				Assert::AreEqual(rfs,*p);
+				rfs--;
 			}
 			/*
 			for(int i=a.size();i>=1;i--)

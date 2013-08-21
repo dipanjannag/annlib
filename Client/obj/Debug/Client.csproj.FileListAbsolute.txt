@@ -11,3 +11,16 @@ C:\Users\Dipanjan\Documents\Visual Studio 2012\Projects\ann\Client\obj\Debug\Cli
 C:\Users\Dipanjan\Documents\Visual Studio 2012\Projects\ann\Client\obj\Debug\Client.csproj.GenerateResource.Cache
 C:\Users\Dipanjan\Documents\Visual Studio 2012\Projects\ann\Client\obj\Debug\Client.exe
 C:\Users\Dipanjan\Documents\Visual Studio 2012\Projects\ann\Client\obj\Debug\Client.pdb
+C:\Users\Dipanjan\Documents\GitHub\annlib\Client\bin\Debug\Client.exe.config
+C:\Users\Dipanjan\Documents\GitHub\annlib\Client\bin\Debug\Client.exe
+C:\Users\Dipanjan\Documents\GitHub\annlib\Client\bin\Debug\Client.pdb
+C:\Users\Dipanjan\Documents\GitHub\annlib\Client\obj\Debug\Client.csprojResolveAssemblyReference.cache
+C:\Users\Dipanjan\Documents\GitHub\annlib\Client\obj\Debug\MainWindow.baml
+C:\Users\Dipanjan\Documents\GitHub\annlib\Client\obj\Debug\MainWindow.g.cs
+C:\Users\Dipanjan\Documents\GitHub\annlib\Client\obj\Debug\App.g.cs
+C:\Users\Dipanjan\Documents\GitHub\annlib\Client\obj\Debug\Client_MarkupCompile.cache
+C:\Users\Dipanjan\Documents\GitHub\annlib\Client\obj\Debug\Client.g.resources
+C:\Users\Dipanjan\Documents\GitHub\annlib\Client\obj\Debug\Client.Properties.Resources.resources
+C:\Users\Dipanjan\Documents\GitHub\annlib\Client\obj\Debug\Client.csproj.GenerateResource.Cache
+C:\Users\Dipanjan\Documents\GitHub\annlib\Client\obj\Debug\Client.exe
+C:\Users\Dipanjan\Documents\GitHub\annlib\Client\obj\Debug\Client.pdb
