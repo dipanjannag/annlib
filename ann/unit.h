@@ -23,5 +23,5 @@ public:
 	}
 private:
 	_act func;
-	size_t dim;
+	const size_t dim;
 };

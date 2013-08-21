@@ -16,6 +16,7 @@
 #include <ctime>
 #include <atomic>
 #include <iostream>
+#include "except.h"
 typedef pair<int, future<void> > tEntry;
 using namespace std;
 
@@ -44,10 +45,15 @@ public:
 		clearCount = 0;
 		
 	}
-	PerceptronLayer(unit<T> u,size_t c)
+	/**
+	this function will create a perceptronlayer from a example unit and the no of that unit
+	@param uni the reference (sample) unit
+	@param _count the number of that unit in the perticular layer
+	*/
+	PerceptronLayer(unit<T> uni,size_t _count)
 	{
-		this->unitDim = u.getDim();
-		this->unitCount = c;
+		this->unitDim = uni.getDim();
+		this->unitCount = _count;
 		this->inpDim = unitDim*unitCount;
 		this->outDim = unitCount;
 		feedCount = 0;
@@ -64,6 +70,30 @@ public:
 		clearCount = 0;
 		
 	}
+	PerceptronLayer(unit<T> uni)
+	{
+		this->unitDim = uni.getDim();
+		//this->unitCount = _count;
+		//this->inpDim = unitDim*unitCount;
+		//this->outDim = unitCount;
+		feedCount = 0;
+		manip = [](vector<FeatureSet<T> > v){
+			FeatureSet<T> temp;
+			for (int i = 0; i < v.size(); i++)
+			{
+				temp.combine(v.at(i));
+			}
+			return temp;
+		};
+		inThread.store(NULL);
+		ready = false;
+		clearCount = 0;
+		
+	}
+	/**
+	this constructor creates the layer with the
+	*/
+	/*
 	PerceptronLayer(size_t unitno)
 	{
 		this->unitDim = NULL;
@@ -84,6 +114,7 @@ public:
 		clearCount = 0;
 		
 	}
+	*/
 	/** this function connects the current layer to another layer. There are two conditions:
 		a) the destination layer should constructed with the size_t argument constructor
 		b) if the destination is initialised with the 2 argument constructor then des.inpDim == this->outDim and 
@@ -93,16 +124,15 @@ public:
 	*/
 	void connectTo( PerceptronLayer<T>& p)
 	{
-		
-		if(p.inpDim!=NULL&& p.unitDim!=NULL)
+		if(p.inpDim!=NULL)	// what should null
+		{
+			// throw some error
+		}
+		else
 		{
 			p.inpDim = this->outDim;
-			p.unitDim = p.inpDim / p.unitCount;
-		}
-		else if(p.inpDim != this->outDim&&p.unitDim != p.inpDim / p.unitCount)
-		{
-			cout<<" these two layer cannot be connected\n";
-			return;
+			p.unitCount = p.inpDim/p.unitDim;
+			p.outDim = p.unitCount;
 		}
 		p.connectsFrom.push_back(this);
 		connectsTo.push_back(&p);

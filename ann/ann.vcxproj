@@ -87,6 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="calculation.h" />
+    <ClInclude Include="except.h" />
     <ClInclude Include="Feature.h" />
     <ClInclude Include="FeatureSet.h" />
     <ClInclude Include="globals.h" />
