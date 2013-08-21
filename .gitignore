@@ -226,3 +226,8 @@ pip-log.txt
 *.sbr
 *.pdb
 *.idb
+*.lastbuildstate
+*.pch
+*.sbr
+*.pch.*
+*.nativecodeanalysis.*
