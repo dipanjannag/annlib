@@ -231,8 +231,3 @@ pip-log.txt
 *.sbr
 *.pch.*
 *.nativecodeanalysis.*
-*.exp
-*.sdf
-*.ilk
-*.bsc
-*.lib

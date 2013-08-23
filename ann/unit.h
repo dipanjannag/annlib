@@ -4,8 +4,9 @@ template<typename T> class unit
 {
 
 public:
-	unit(size_t d) : dim(d)
+	unit(size_t d)
 	{
+		this->dim = d;
 	}
 
 	unit(size_t d,_act f)

@@ -36,8 +36,8 @@ template<typename T> class PerceptronLayer
 public:
 	PerceptronLayer()
 	{
+		//this->unitDim = u.dim;
 		feedCount = 0;
-		/*
 		manip = [](vector<FeatureSet<T> > v){
 			FeatureSet<T> temp;
 			for (int i = 0; i < v.size(); i++)
@@ -46,7 +46,6 @@ public:
 			}
 			return temp;
 		};
-		*/
 		inThread.store(NULL);
 		ready = false;
 		clearCount = 0;
@@ -64,7 +63,6 @@ public:
 		this->inpDim = unitDim*unitCount;
 		this->outDim = unitCount;
 		feedCount = 0;
-		/*
 		manip = [](vector<FeatureSet<T> > v){
 			FeatureSet<T> temp;
 			for (int i = 0; i < v.size(); i++)
@@ -73,15 +71,56 @@ public:
 			}
 			return temp;
 		};
-		*/
 		inThread.store(NULL);
 		ready = false;
 		clearCount = 0;
-		//this->inNet = nullptr;
 		
 	}
-
-
+	PerceptronLayer(unit<T> uni)
+	{
+		this->unitDim = uni.getDim();
+		//this->unitCount = _count;
+		//this->inpDim = unitDim*unitCount;
+		//this->outDim = unitCount;
+		feedCount = 0;
+		manip = [](vector<FeatureSet<T> > v){
+			FeatureSet<T> temp;
+			for (int i = 0; i < v.size(); i++)
+			{
+				temp.combine(v.at(i));
+			}
+			return temp;
+		};
+		inThread.store(NULL);
+		ready = false;
+		clearCount = 0;
+		
+	}
+	/**
+	this constructor creates the layer with the
+	*/
+	/*
+	PerceptronLayer(size_t unitno)
+	{
+		this->unitDim = NULL;
+		this->unitCount = unitno;
+		this->inpDim = NULL;
+		this->outDim = unitCount;
+		feedCount = 0;
+		manip = [](vector<FeatureSet<T> > v){
+			FeatureSet<T> temp;
+			for (int i = 0; i < v.size(); i++)
+			{
+				temp.combine(v.at(i));
+			}
+			return temp;
+		};
+		inThread.store(NULL);
+		ready = false;
+		clearCount = 0;
+		
+	}
+	*/
 	/** this function connects the current layer to another layer. There are two conditions:
 		a) the destination layer should constructed with the size_t argument constructor
 		b) if the destination is initialised with the 2 argument constructor then des.inpDim == this->outDim and 
@@ -91,16 +130,28 @@ public:
 	*/
 	void connectTo( PerceptronLayer<T>& p)
 	{
+		if(p.inpDim!=NULL)	// what should null
+		{
+			// throw some error
+		}
+		else
+		{
+			p.inpDim = this->outDim;
+			p.unitCount = p.inpDim/p.unitDim;
+			p.outDim = p.unitCount;
+		}
 		p.connectsFrom.push_back(this);
 		connectsTo.push_back(&p);
 	}
 	/** only public feeder. the other one is private (the no-arg one). accepts vector<T> as input
 		improvement: if the argument is taken by referance
 	*/
-	void feedv(vector<T>& inp)
+	void feedv(vector<T> inp)
 	{
-		FeatureSet<T> temp(inp);
-		this->input = temp;
+		Feature<T> temp(inp);
+		FeatureSet<T> temp1;
+		temp1.addFeature(temp);
+		this->input = temp1;
 		this->calculate();
 		this->propagate();
 	}
@@ -112,7 +163,7 @@ public:
 
 	void setValid()
 	{
-		this->valid.store(true);
+		this->valid = true;
 	}
 	void setInvalid()
 	{
@@ -120,18 +171,19 @@ public:
 	}
 	bool isValid()
 	{
-		return valid.load();
+		return valid;
 	}
 	void clear()
 	{
 		//this->inThread = NULL;
 		clearCount++;
 		
-		if(clearCount.load()==this->connectsTo.size())
+		if(clearCount=this->connectsTo.size())
 		{
-			//this->input.clear();
-			this->output.clear();
-			this->clearCount.store(0);
+			this->inThread.store(NULL);
+			this->input.clear();
+			//this->output.clear();
+			this->clearCount=0;
 		}
 	}
 	bool isReady()
@@ -141,24 +193,6 @@ public:
 	FeatureSet<T>* getout()
 	{
 		return new FeatureSet<T>(output);
-	}
-	void setNetwork(void* _in)
-	{
-		this->inNet = _in;
-	}
-	bool ReadyFlag()
-	{
-		return _rdyFlag.load();	
-	/*
-		if(this->inNet !=nullptr)
-		{
-			(static_cast<network<T> >(inNet))->
-		}
-		else
-		{
-			cout<<"something unexpected happened\n";
-		}
-		*/
 	}
 private:
 	mutex consLock;
@@ -189,7 +223,7 @@ private:
 	size_t unit;
 	//vector<int>::iterator inThread;
 	/** valid flag*/
-	atomic<bool> valid;
+	bool valid;
 	//unsigned int inThread;
 	/** the layer is in thread this. Custom id. Atomic */
 	atomic<int> inThread;
@@ -198,12 +232,6 @@ private:
 	static map<int, future<void>* > threadPool;
 	/** mutex for threadPool*/
 	mutex threadPoolMutex;
-	atomic<bool> _rdyFlag;
-	/** variable to set ready flag*/
-#ifdef USE_AMP
-	/** mutex to get gpu( :D) exclusively */
-	mutex ampMutex;
-#endif
 
 	size_t feedCount;
 	/** ready flag*/
@@ -249,6 +277,18 @@ private:
 						lock_guard<mutex> thrdPoollockG(threadPoolMutex);
 						threadPool.at(temp->inThread.load())->wait();
 				}
+				/*
+				threadPoolMutex.lock();
+				try{
+				threadPool.at(temp->inThread.load())->wait();
+				// 18/8/2013 reported error invalid map key
+				threadPoolMutex.unlock();
+				}
+				catch( exception e){
+					cout<<e.what()<<"\n";
+					threadPoolMutex.unlock();
+				}
+				*/
 			}
 			else
 			{
@@ -281,22 +321,41 @@ private:
 		
 		for(int i(0);i<connectsFrom.size();i++)
 		{
-			input.insert(input.begin(),connectsFrom.at(i)->output.begin(),connectsFrom.at(i)->output.end());
-
+			// put a review here
+			input.combine(connectsFrom.at(i)->output);
+			//connectsFrom.at(i)->clear();	// make sure this make is available
+			// here to acquire lock
+			//if(threadPool[connectsFrom.at(i)->inThread]->valid())
+				//threadPool[connectsFrom.at(i)->inThread]->get();
 			{
-				connectsFrom.at(i)->clear();
 				lock_guard<mutex> lgMutex(threadPoolMutex);
 				auto tmppp= connectsFrom.at(i)->inThread.load() ;
+			//threadPoolMutex.lock();
 				try{
 					if(connectsFrom.at(i)->inThread.load()!=NULL)
 					{
+						cout<<"fuck me up\n";
+						/*
+						consLock.lock();
+						cout<<"trying to erase entry\n";
+						consLock.unlock();
+						*/
 						delete threadPool.at(tmppp);
 						threadPool.erase(tmppp);
+
+						consLock.lock();
+						//cout<<"entry erased\n";
+						cout<<"thread id " <<tmppp <<"deleted\n";
+						consLock.unlock();
 					}
 					else
 					{
-						// throw some error	
+						consLock.lock();
+						cout<<" the specified key is null\n";
+						consLock.unlock();
+						
 					}
+					// this erase is causing the whole thing
 				}
 				catch(exception e)
 				{
@@ -304,8 +363,11 @@ private:
 					cout<<e.what()<<"\n";
 					consLock.unlock();
 				}
+				
+				//threadPoolMutex.unlock();
 			}
 			connectsFrom.at(i)->feedCount = 0;
+			//this->setValid(); //may not be here though
 		}
 
 	}
@@ -313,28 +375,37 @@ private:
 	void calculate()
 	{
 		
-		//this->output.clear();
-		//this->output = this->input;
+		this->output.clear();
+		this->output = this->input;
+		this->ready = true;
 		
+		/*
 #ifdef USE_AMP
-		//input.assign(inpDim,0);
-		{
-			lock_guard<mutex> gpu(ampMutex);
-			output.assign(outDim,0);
-			array_view<T,1> inp(input.size(),input);
-			array_view<T,1> out(output.size(),output);
-			int dimn = this->unitDim;
-
-			parallel_for_each(out.extent,[=](index<1> idx) restrict(amp){
-				for (int i = 0; i < dimn; i++)
-				{
-					out[idx]+=inp[(dimn*idx)+i];
-				}
-			});
-			out.synchronize();
-		}
+		input.init(inpDim,0);
+		output.init(outDim,0);
+		int a[100];
+		int b[100];
+		array_view<T,1> inp(input.size(),input);
+		array_view<T,1> out(output.size(),output);
+		int dimn = this->unitDim;
+		parallel_for_each(out.extent,[=](index<1> idx) restrict(amp){
+			for (int i = 0; i < dimn; i++)
+			{
+				out[idx]+=inp[idx+i];
+			}
+		});
+		out.synchronize();
 #endif
-		//this->setValid();
+		*/
+		/*
+		if(connectsTo.size()!=0)
+		{
+			while(this->output.hasNext())
+			{
+				cout<<output.next()<<"\t";
+			}
+		}
+		*/
 	}
 	/** this function is called after calculate function. it checks for the entries in connectTo vector and call feed()
 		asynchronusly for all of them and create the thread table entries
@@ -345,7 +416,10 @@ private:
 		for(int i(0);i<connectsTo.size();i++)
 		{
 			auto temp = generateTid();
+			//auto chk = connectsTo.at(i)->feed;
 			auto p = new future<void>(async(&PerceptronLayer<T>::feed,connectsTo.at(i)));
+			//auto p = new future<void>(async(&PerceptronLayer<T>::feed,connectsTo.at(i)));
+			//threadPoolMutex.lock();
 			{
 				lock_guard<mutex> lgtpMutex(threadPoolMutex);
 				try{
@@ -359,6 +433,10 @@ private:
 				}
 			}
 			connectsTo.at(i)->inThread.store(temp);
+			consLock.lock();
+			cout<<"thread id " <<temp<<" stored\n";
+			consLock.unlock();
+			//cout<<"temp value "<<connectsTo.at(i)->inThread.load()<<"\n";
 			
 		}
 	}
@@ -370,6 +448,7 @@ private:
 		
 		srand(time(0));
 		auto ret = rand();
+		//threadPoolMutex.lock();
 		{
 			lock_guard<mutex> tplg(threadPoolMutex);
 			while(threadPool.find(ret)!=threadPool.end())	// check what find returns... it may be iterator
@@ -377,6 +456,7 @@ private:
 				ret+=1;
 			}
 		}
+		//threadPoolMutex.unlock();
 		return ret;
 		
 	}
@@ -402,13 +482,13 @@ private:
 		this->checkDep();
 		this->accumulate();
 		this->calculate();
-		if(connectsTo.size()!=0)
+		if(this->connectsTo.size()!=0)
+		{
 			this->propagate();
+		}
 
 	}
 	
-	
 };
-
 //std::map<T,T2> YourClass::YourMember = std::map<T,T2>();
 map<int, future<void>* > PerceptronLayer<int>::threadPool; //= map<int, future<void>* >();

@@ -1,8 +1,8 @@
-
+/*
 #include <exception>
 #include <string>
 using namespace std;
-/*enum errTyp{
+enum errTyp{
 	CanNotConnect,
 	FeatureSetOutOfRange
 };

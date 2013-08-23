@@ -11,16 +11,3 @@ C:\Users\Dipanjan\Documents\Visual Studio 2012\Projects\ann\Client\obj\Release\C
 C:\Users\Dipanjan\Documents\Visual Studio 2012\Projects\ann\Client\obj\Release\Client.csproj.GenerateResource.Cache
 C:\Users\Dipanjan\Documents\Visual Studio 2012\Projects\ann\Client\obj\Release\Client.exe
 C:\Users\Dipanjan\Documents\Visual Studio 2012\Projects\ann\Client\obj\Release\Client.pdb
-C:\Users\Dipanjan\Documents\GitHub\annlib\Client\bin\Release\Client.exe.config
-C:\Users\Dipanjan\Documents\GitHub\annlib\Client\bin\Release\Client.exe
-C:\Users\Dipanjan\Documents\GitHub\annlib\Client\bin\Release\Client.pdb
-C:\Users\Dipanjan\Documents\GitHub\annlib\Client\obj\Release\Client.csprojResolveAssemblyReference.cache
-C:\Users\Dipanjan\Documents\GitHub\annlib\Client\obj\Release\MainWindow.baml
-C:\Users\Dipanjan\Documents\GitHub\annlib\Client\obj\Release\MainWindow.g.cs
-C:\Users\Dipanjan\Documents\GitHub\annlib\Client\obj\Release\App.g.cs
-C:\Users\Dipanjan\Documents\GitHub\annlib\Client\obj\Release\Client_MarkupCompile.cache
-C:\Users\Dipanjan\Documents\GitHub\annlib\Client\obj\Release\Client.g.resources
-C:\Users\Dipanjan\Documents\GitHub\annlib\Client\obj\Release\Client.Properties.Resources.resources
-C:\Users\Dipanjan\Documents\GitHub\annlib\Client\obj\Release\Client.csproj.GenerateResource.Cache
-C:\Users\Dipanjan\Documents\GitHub\annlib\Client\obj\Release\Client.exe
-C:\Users\Dipanjan\Documents\GitHub\annlib\Client\obj\Release\Client.pdb
