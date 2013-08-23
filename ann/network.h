@@ -1,61 +1,55 @@
 #pragma once
 #include <vector>
 #include "PerceptronLayer.h"
-using namespace std;
+#include "FeatureSet.h"
+#include <atomic>
+#include <chrono>
 /*
+using namespace std;
 template<typename T> class network
 {
-	network()
-	{
-	}
-	network(PerceptronLayer<T>& pl)
-	{
-		members.push_back(pl);
-	}
-
-	void addLayer( PerceptronLayer<T>& pl)
-	{
-		members.push_back(pl);
-	}
-
-	void putLayer(PerceptronLayer<T>& pl, size_t idx)
-	{
-		members.insert(idx,pl);
-	}
-	
-	void feed(T inp[])
-	{
-	}
-	void feed(T* inp)
-	{
-	}
-	void feed(vector<T> inp)
-	{
-	}
-	void feed(FeatureSet<T>& inp)
-	{
-		// this feeding will be nothing but a tree, not binary at least, traversal.......
-		for(int i(0);i<this->iniLayer.size();i++)
-		{
-			iniLayer[i].feed(inp);
-
-		}
-	}
-	/*
-	friend void PerceptronLayer::setId(int Id);
+	//friend void PerceptronLayer<T>::setReadyFlag();
 public:
-	network(void);
-	~network(void);
-	
-	void add(PerceptronLayer& p);
-	void feed();
-
-
+	network(PerceptronLayer<T>& _initl) : _start(_initl)
+	{
+		_count=0;
+		_currReady=0;
+		_initl.setNetwork((void*) this);
+	}
+	void addEndPoint(PerceptronLayer<T>& _endl)
+	{
+		//_end.push_back(_endl);
+		//_endl.setNetwork((void*) this);
+		_end.push_back(_endl);
+		_count++;
+	}
+	bool ready()
+	{
+		for(int i(0);i<_end.size();i++)
+		{
+		}
+		*/
+		/*
+		if(_currReady.load()!=this->_count)
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+		*/
+/*
+	}
+	void incReady()
+	{
+		_currReady++;
+	}
 private:
-	vector<PerceptronLayer<T>&> members;
-	vector< PerceptronLayer<T>& > iniLayer;
-	int currentSize;
-	void setId(PerceptronLayer& p);	
+	PerceptronLayer<T>& _start;
+	vector<PerceptronLayer<T>&> _end;
+	atomic<int> _currReady;
+	size_t _count;
 };
 
 */

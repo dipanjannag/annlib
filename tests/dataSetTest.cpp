@@ -49,14 +49,12 @@ namespace tests
 	public:
 		TEST_METHOD(fetSetTest)
 		{
-			FeatureSet<int> a;
 			vector<int> val;
 			for (int i = 0; i < 5; i++)
 			{
 				val.push_back(i);
 			}
-			Feature<int> f(val);
-			a.addFeature(f);
+			FeatureSet<int> a(val);
 			auto itr = a.begin();
 			for(int i(0);i<a.size();i++)
 			{
@@ -82,6 +80,7 @@ namespace tests
 				itr--;
 			}
 			*/
+
 		}
 	};
 }

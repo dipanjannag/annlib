@@ -80,18 +80,22 @@ int _tmain(int argc, _TCHAR* argv[])
 	pq.feed(a);
 	Perceptron<float> qp(pq);
 	*/
-	PerceptronLayer<int> a;
-	PerceptronLayer<int> b;
-	PerceptronLayer<int> c;
-	PerceptronLayer<int> d;
+	unit<int> funit(3);
+	unit<int> f(2);
+	PerceptronLayer<int> a(funit,3);
+	PerceptronLayer<int> b(funit,1);
+	PerceptronLayer<int> c(funit,1);
+	PerceptronLayer<int> d(f,1);
+	/*
 	PerceptronLayer<int> e;
 	PerceptronLayer<int> f;
 	PerceptronLayer<int> g;
 	PerceptronLayer<int> h;
 	PerceptronLayer<int> i;
 	PerceptronLayer<int> j;
+	*/
 	vector<int> fV;
-	for(int i(0);i<5;i++)
+	for(int i(0);i<9;i++)
 		fV.push_back(i);
 	/*
 	PerceptronLayer<int> ca;
@@ -107,6 +111,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//inter.connectTo(fin);
 	//ba.connectTo(fin);
 	//aba.connectTo(fin);
+	/*
 	a.connectTo(b);
 	a.connectTo(e);
 	b.connectTo(c);
@@ -114,19 +119,37 @@ int _tmain(int argc, _TCHAR* argv[])
 	c.connectTo(f);
 	d.connectTo(f);
 	e.connectTo(f);
+	*/
 	//f.connectTo(g);
 	//f.connectTo(h);
 	//g.connectTo(i);
 	//h.connectTo(i);
 	//i.connectTo(j);
+	a.connectTo(b);
+	a.connectTo(c);
+	//b.connectTo(d);
+	//c.connectTo(d);
+	//network<int> n(a);
+	//n.addEndPoint(b);
+	//n.addEndPoint(c);
 	a.feedv(fV);
-	this_thread::yield();
-	d.getout()->print();
+	//d.getout()->print();
+	//system("pause");
 	system("pause");
-	this_thread::yield();
-	f.getout()->print();
-	cout<<"\n";
-	f.getout()->print();
+	/*
+	if(n.ready())
+	{
+		cout<<"ready\n";
+	}
+	else
+	{
+		cout<<"false\n";
+	}
+	*/
+	//f.getout()->print();
+	//cout<<"\n";
+	//f.getout()->print();
+	//system("pause");
 	system("pause");
 	return 0;
 }
