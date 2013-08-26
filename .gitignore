@@ -236,3 +236,9 @@ pip-log.txt
 *.ilk
 *.bsc
 *.lib
+*.exp
+*.lib
+*.sdf
+Debug/
+Release/
+TestResults/
