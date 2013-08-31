@@ -3,6 +3,8 @@
 #include <vector>
 #include "except.h"
 using namespace std;
+//using namespace ann;
+namespace ann{
 /**_indIt<T> is a custom random access iterator derived from std::iterator. This class is abstract and ony to inherit from std::iterator
 	and to give a prototype how a iterator for ann dataset should be
 	
@@ -120,3 +122,4 @@ public:
 protected:
 	vector<int>& setsRef;
 };
+}

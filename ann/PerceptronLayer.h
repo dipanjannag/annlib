@@ -25,9 +25,9 @@ using namespace concurrency;
 #endif
 typedef pair<int, future<void> > tEntry;
 using namespace std;
+using namespace ann;
 
-
-
+namespace ann{
 /** this class is a collection of units. it takes FeatureSet<T> as input and generates another FeatureSet<T> as output.
 	it is smart enough to be connected to other layers and to generate result at the last connected layer
 */
@@ -50,6 +50,7 @@ public:
 		inThread.store(NULL);
 		ready.store(false);
 		clearCount = 0;
+		this->_manip = nullptr;
 		
 	}
 	/**
@@ -77,6 +78,7 @@ public:
 		inThread.store(NULL);
 		ready.store(false);
 		clearCount = 0;
+		this->_manip = nullptr;
 		//this->inNet = nullptr;
 		
 	}
@@ -97,13 +99,13 @@ public:
 	/** only public feeder. the other one is private (the no-arg one). accepts vector<T> as input
 		improvement: if the argument is taken by referance
 	*/
-	void feedv(vector<T>& inp)
+	void _feed(FeatureSet<T> _inp)
 	{
-		FeatureSet<T> temp(inp);
-		this->input = temp;
+		this->input = _inp;
 		this->calculate();
 		this->propagate();
 	}
+
 
 	void setInthread(vector<int>::iterator it)
 	{
@@ -122,6 +124,8 @@ public:
 	{
 		return valid.load();
 	}
+	/** this function is called in the accumulation step
+	*/
 	void clear()
 	{
 		//this->inThread = NULL;
@@ -132,12 +136,23 @@ public:
 			//this->input.clear();
 			this->output.clear();
 			this->clearCount.store(0);
+			this->ready.store(false);
 		}
 	}
+	/** this function in called in network object to find if the layer is ready
+	*/
 	bool isReady()
 	{
 		return this->ready.load();
 	}
+	/**
+	function to set _manip
+	*/
+	void customize( function< FeatureSet<T> (FeatureSet<T>) > f)
+	{
+		this->_manip = (function< FeatureSet<T> (FeatureSet<T>) >*)(new function< FeatureSet<T> (FeatureSet<T>) >(f));
+	}
+	// perpouse of the below functions are unspecified
 	FeatureSet<T>* getout()
 	{
 		return new FeatureSet<T>(output);
@@ -149,16 +164,6 @@ public:
 	bool ReadyFlag()
 	{
 		return _rdyFlag.load();	
-	/*
-		if(this->inNet !=nullptr)
-		{
-			(static_cast<network<T> >(inNet))->
-		}
-		else
-		{
-			cout<<"something unexpected happened\n";
-		}
-		*/
 	}
 	PerceptronLayer<T>* data()
 	{
@@ -217,6 +222,13 @@ private:
 	/** ready flag*/
 	atomic<bool> ready;
 	atomic<int> clearCount;
+	/** this manip will hold a function<> object. Which will take the current input as argument (by ref)
+		our job is to create the actual input from formal input
+	*/
+	void* _manip;
+	/** variable to hold the formal input (not the actual input)
+	*/
+	FeatureSet<T> _forInput;
 	void operator() (unsigned int ID)
 	{
 		this->id = ID;
@@ -285,11 +297,12 @@ private:
 	*/
 	inline void accumulate()
 	{
-		this->input.clear();	//defined in FeatureSet	
+		//this->input.clear();	//defined in FeatureSet	
+		this->_forInput.clear();
 		
 		for(int i(0);i<connectsFrom.size();i++)
 		{
-			input.insert(input.begin(),connectsFrom.at(i)->output.begin(),connectsFrom.at(i)->output.end());
+			_forInput.insert(_forInput.begin(),connectsFrom.at(i)->output.begin(),connectsFrom.at(i)->output.end());
 
 			{
 				connectsFrom.at(i)->clear();
@@ -314,6 +327,16 @@ private:
 				}
 			}
 			connectsFrom.at(i)->feedCount = 0;
+		}
+
+		if(this->_manip==nullptr)
+		{
+			this->input = this->_forInput;
+		}
+		else
+		{
+			
+			this->input = (*((function<FeatureSet<T> ( FeatureSet<T>) >*)_manip))(this->_forInput);
 		}
 
 	}
@@ -424,3 +447,4 @@ private:
 
 //std::map<T,T2> YourClass::YourMember = std::map<T,T2>();
 map<int, future<void>* > PerceptronLayer<int>::threadPool; //= map<int, future<void>* >();
+}

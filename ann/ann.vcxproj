@@ -92,6 +92,7 @@
     <ClInclude Include="Feature.h" />
     <ClInclude Include="FeatureSet.h" />
     <ClInclude Include="globals.h" />
+    <ClInclude Include="index.h" />
     <ClInclude Include="Iterator.h" />
     <ClInclude Include="network.h" />
     <ClInclude Include="Perceptron.h" />

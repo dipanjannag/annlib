@@ -131,10 +131,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	c.connectTo(d);
 	network<int> n(a);
 	n.addEndPoint(d);
-	a.feedv(fV);
+	n.feed(fV);
 	//d.getout()->print();
 	//system("pause");
-	n.ready();
+	n.makeReady();
 	//system("pause");
 	
 	/*
@@ -150,7 +150,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//f.getout()->print();
 	//cout<<"\n";
 	//f.getout()->print();
-	//system("pause");
+	system("pause");
 	return 0;
 }
 // in the log in console there is a entry thread id 0 deleted

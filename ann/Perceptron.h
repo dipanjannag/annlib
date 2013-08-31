@@ -2,6 +2,9 @@
 #include <vector>
 #include <assert.h>
 using namespace std;
+//using namespace ann;
+
+namespace ann{
 // the previous class is needed to be updated to support enhanced functionality
 template<typename T> class Perceptron
 {
@@ -85,4 +88,5 @@ public:
 
 	}
 };
+}
 

@@ -66,13 +66,15 @@ namespace tests
 		a.connectTo(c);
 		b.connectTo(d);
 		c.connectTo(d);
+		a.customize([](FeatureSet<int> f){
+			return f;
+		});
 		network<int> n(a);
 		n.addEndPoint(d);
-		a.feedv(fV);
+		n.feed(fV);
 	//d.getout()->print();
 	//system("pause");
-		n.ready();
-				// TODO: Your test code here
+		n.makeReady();
 		Assert::AreEqual(72,d.tmpchk());
 		}
 

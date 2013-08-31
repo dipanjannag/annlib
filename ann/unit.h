@@ -1,5 +1,7 @@
 #pragma once
 #include "globals.h"
+using namespace ann;
+namespace ann{
 template<typename T> class unit
 {
 
@@ -24,3 +26,4 @@ private:
 	_act func;
 	const size_t dim;
 };
+}

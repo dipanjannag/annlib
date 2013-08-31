@@ -5,6 +5,8 @@
 #include <atomic>
 
 using namespace std;
+using namespace ann;
+namespace ann{
 template<typename T> class network
 {
 	//friend void PerceptronLayer<T>::setReadyFlag();
@@ -20,7 +22,7 @@ public:
 		//_endl.setNetwork((void*) this);
 		_end.push_back(_endl.data());
 	}
-	void ready()
+	void makeReady()
 	{
 		for(int i(0);i<_end.size();i++)
 		{
@@ -35,7 +37,17 @@ public:
 		}
 
 	}
+	void feed(FeatureSet<T> _inp)
+	{
+		_start._feed(_inp);
+	}
+	void feed(vector<T> _inp)
+	{
+		FeatureSet<T> tmp(_inp);
+		_start._feed(_inp);
+	}
 private:
 	PerceptronLayer<T>& _start;
 	vector<PerceptronLayer<T>*> _end;
 };
+}
