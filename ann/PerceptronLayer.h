@@ -103,6 +103,7 @@ public:
 	void _feed(FeatureSet<T> _inp)
 	{
 		this->input = _inp;
+		cout<<"first feed channel "<< this->input.getChannel()<<"\n";
 		this->calculate();
 		this->propagate();
 	}
@@ -185,6 +186,10 @@ public:
 	size_t tmpoch()
 	{
 		return this->output.getChannel();
+	}
+	FeatureSet<T>& getO()
+	{
+		return output;
 	}
 private:
 	mutex consLock;
@@ -315,25 +320,24 @@ private:
 	inline void accumulate()
 	{
 		this->_forInput.clear();
-		size_t _inpChanD = NULL;
+		//size_t _inpChanD = NULL;
+		if(connectsFrom.size()!=0)
+		{
+			this->_forInput.setChannel(connectsFrom[0]->output.getChannel());
+		}
+
 		for(int i(0);i<connectsFrom.size();i++)
 		{
 
-			if(_inpChanD==NULL)
+			_forInput.insert(_forInput.begin(),connectsFrom.at(i)->output.begin(),connectsFrom.at(i)->output.end());
+			if(connectsFrom.size()!=0) // in ==0 case this function won't be called :D
+				_forInput.setChannel(connectsFrom[0]->output.getChannel());
+#if DEBUG_LEVEL >0
+			if(connectsFrom.at(i)->output.getChannel()!=this->_forInput.getChannel())
 			{
-				_inpChanD = connectsFrom.at(i)->output.getChannel();
-			}
-#if DEBUG_LEVEL > 0
-			else
-			{
-				if(_inpChanD!= connectsFrom.at(i)->output.getChannel())
-				{
-					cout<<"unequal channel\n";
-				}
+				// throw some error or take a log
 			}
 #endif
-			_forInput.setChannel(_inpChanD);
-			_forInput.insert(_forInput.begin(),connectsFrom.at(i)->output.begin(),connectsFrom.at(i)->output.end());
 			{
 				connectsFrom.at(i)->clear();
 				lock_guard<mutex> lgMutex(threadPoolMutex);
@@ -391,14 +395,29 @@ private:
 			});
 			out.synchronize();
 		}
-		this->ready.store(true);
 		cout<<this->input.getChannel()<<"\n";
 		if(this->_outChannel!=NULL)
+		{
+#if DEBUG_LEVEL >1
+			if(this->output.size()%this->_outChannel!=0)
+			{
+				// throw some error or take a log
+			}
+			else
+			{
+				this->output.setChannel(this->_outChannel);
+			}
+#else
 			this->output.setChannel(this->_outChannel);
+#endif
+
+		}
 		else
 		{
 			this->output.setChannel(this->input.getChannel());
 		}
+		this->ready.store(true);
+		
 #if DEBUG_LEVEL > 1
 		/*
 		if(this->output.size()%this->_outChannel!=0)
@@ -486,6 +505,7 @@ private:
 		if(connectsTo.size()!=0)
 		{
 			this->propagate();
+			
 		}
 
 	}

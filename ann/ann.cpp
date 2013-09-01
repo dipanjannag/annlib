@@ -14,72 +14,6 @@
 using namespace std;
 int _tmain(int argc, _TCHAR* argv[])
 {
-	//cout<<"suck my dick\n";
-	/*
-	vector<float> a;
-	vector<float> p;
-	for(int i(10);i<15;i++)
-		p.push_back(i);
-	for(int i(0);i<2;i++)
-		a.push_back(i);
-		*/
-	/*
-	Feature<float> b([&a]{return a; });
-	
-	while(b.hasNext())
-		cout<< b.next()<<" ";
-	cout<<"\n";
-	
-	b.setFeature([&a]{ 
-		vector<float> t;
-		t.reserve(a.size()+1);
-		for(int i(0);i<a.size();i++)
-		{
-			t.push_back( a.at(i)/2 );
-		}
-		return t;});
-		
-	Feature<float> pqr(p);
-	FeatureSet<float> f;
-	f.addFeature(b);
-	f.putFeature(pqr,1);
-	while(f.hasNext())
-		std::cout<< f.next()<<" ";
-	std::cout<<"\n";
-	
-	for(int i(0);i<b.getDim();i++)
-	{
-		std::cout<<f[i]<<" ";
-	}
-	*/
-	/*
-	PerceptronLayer<float> x;
-	Perceptron<float> pq(3);
-	Perceptron<float> pqr(3);
-	x.addPerceptron(pq);	// capacity is being reset in this line....
-	x.addPerceptron(pqr);
-	Feature<float> fet(2,1);
-	Feature<float> fet1(2,8);
-	FeatureSet<float> fs;
-	fs.addFeature(fet);
-	fs.addFeature(fet1);
-	x.feed(fs);		//here capacity is reset to zero.... How and why????
-	auto t= x.getOutput();
-	while(t.hasNext())
-	{
-		cout<<t.next()<<" ";
-	}
-	
-	//vector<int> abc(a.begin(),a.begin()+3);
-	
-	// the problem is with compiler supplied copy constructor.....
-	// either i've to give write access or i've to specialise copy constructor
-	*/
-	/*
-	Perceptron<float> pq(3);
-	pq.feed(a);
-	Perceptron<float> qp(pq);
-	*/
 	unit<int> funit(3);
 			unit<int> f(2);
 			PerceptronLayer<int> a(funit,3);
@@ -97,28 +31,15 @@ int _tmain(int argc, _TCHAR* argv[])
 			c.connectTo(d);
 			network<int> n(a);
 			n.addEndPoint(d);
+			//n.feed(fV,3);
 			n.feed(fV,3);
 			n.makeReady();
 			//cout<<"chan no of a "<<a.tmpoch()<<"\n";
 			//cout<<"chan no of b "<<b.tmpoch()<<"\n";
 			//cout<<"chan no of c "<<c.tmpoch()<<"\n";
-			cout<<"chan no of d "<<d.tmpoch()<<"\n";
+			auto ttf = d.getO();
+			cout<<"dim is "<<ttf.getChannel()<<"\n";
 	system("pause");
-	
-	/*
-	if(n.ready())
-	{
-		cout<<"ready\n";
-	}
-	else
-	{
-		cout<<"false\n";
-	}
-	*/
-	//f.getout()->print();
-	//cout<<"\n";
-	//f.getout()->print();
-	//system("pause");
 	return 0;
 }
 // in the log in console there is a entry thread id 0 deleted

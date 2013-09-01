@@ -46,7 +46,13 @@ public:
 		//_start._feed(_inp);
 		_start._feed(_inp);
 	}
-	void feed(vector<T> _inp,size_t _ch=1)
+	void feed(vector<T> _inp)
+	{
+		FeatureSet<T> tmp(_inp);
+		cout<<tmp.getChannel()<<"\n";
+		_start._feed(tmp);
+	}
+	void feed(vector<T> _inp,size_t _ch)
 	{
 		FeatureSet<T> tmp(_inp,_ch);
 		cout<<tmp.getChannel()<<"\n";

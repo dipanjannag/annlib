@@ -12,9 +12,7 @@ namespace ann{
 */
 template<typename T> class FeatureSet :public vector<T>
 {
-private:
-	size_t _chan;
-	size_t _dim;
+
 public:
 	FeatureSet(vector<T> v,size_t ch = 1) : vector<T>(v)
 	{
@@ -27,13 +25,6 @@ public:
 		_dim = NULL;
 	}
 	FeatureSet(const FeatureSet<T>& _src)
-	{
-		this->_chan = _src._chan;
-		this->_dim = _src._dim;
-		clear();
-		insert(begin(),_src.begin(),_src.end());
-	}
-	FeatureSet(const FeatureSet<T>&& _src)
 	{
 		this->_chan = _src._chan;
 		this->_dim = _src._dim;
@@ -63,28 +54,21 @@ public:
 		this->_dim = _to._dim;
 			//return *this;
 	}
-	/*
-	FeatureSet<T>& operator[] (size_t idx)
-	{
-		if(idx>=this->_chan)
-		{
-			throw new std::out_of_range("channel index out of range");
-		}
-		return FeatureSet<T>(begin()+(this->_dim*idx),begin()+((this->_dim+1)*idx));
-	}
-	*/
 	void setChannel(size_t c)
 	{
-		this->_chan = c;
+		_chan = c;
 	}
 	size_t getChannel()
 	{
-		return this->_chan;
+		return _chan;
 	}
 	size_t getDim()
 	{
 		return this->_dim;
 	}
+private:
+		size_t _chan;
+		size_t _dim;
 
 };
 }
