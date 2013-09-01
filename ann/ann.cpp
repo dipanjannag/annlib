@@ -81,61 +81,29 @@ int _tmain(int argc, _TCHAR* argv[])
 	Perceptron<float> qp(pq);
 	*/
 	unit<int> funit(3);
-	unit<int> f(2);
-	PerceptronLayer<int> a(funit,3);
-	PerceptronLayer<int> b(funit,1);
-	PerceptronLayer<int> c(funit,1);
-	PerceptronLayer<int> d(f,1);
-	/*
-	PerceptronLayer<int> e;
-	PerceptronLayer<int> f;
-	PerceptronLayer<int> g;
-	PerceptronLayer<int> h;
-	PerceptronLayer<int> i;
-	PerceptronLayer<int> j;
-	*/
-	vector<int> fV;
-	for(int i(0);i<9;i++)
-		fV.push_back(i);
-	/*
-	PerceptronLayer<int> ca;
-	PerceptronLayer<int> ac;
-	ab.connectTo(ba);
-	ab.connectTo(ca);
-	ba.connectTo(ac);
-	ca.connectTo(ac);
-	*/
-	//this_thread::sleep_for(chrono::milliseconds(5000));
-	
-	//ba.connectTo(inter);
-	//inter.connectTo(fin);
-	//ba.connectTo(fin);
-	//aba.connectTo(fin);
-	/*
-	a.connectTo(b);
-	a.connectTo(e);
-	b.connectTo(c);
-	b.connectTo(d);
-	c.connectTo(f);
-	d.connectTo(f);
-	e.connectTo(f);
-	*/
-	//f.connectTo(g);
-	//f.connectTo(h);
-	//g.connectTo(i);
-	//h.connectTo(i);
-	//i.connectTo(j);
-	a.connectTo(b);
-	a.connectTo(c);
-	b.connectTo(d);
-	c.connectTo(d);
-	network<int> n(a);
-	n.addEndPoint(d);
-	n.feed(fV);
-	//d.getout()->print();
-	//system("pause");
-	n.makeReady();
-	//system("pause");
+			unit<int> f(2);
+			PerceptronLayer<int> a(funit,3);
+			PerceptronLayer<int> b(funit,1);
+			PerceptronLayer<int> c(funit,1);
+			PerceptronLayer<int> d(f,1);
+			vector<int> fV;
+			for(int i(0);i<9;i++)
+				fV.push_back(i);
+
+
+			a.connectTo(b);
+			a.connectTo(c);
+			b.connectTo(d);
+			c.connectTo(d);
+			network<int> n(a);
+			n.addEndPoint(d);
+			n.feed(fV,3);
+			n.makeReady();
+			//cout<<"chan no of a "<<a.tmpoch()<<"\n";
+			//cout<<"chan no of b "<<b.tmpoch()<<"\n";
+			//cout<<"chan no of c "<<c.tmpoch()<<"\n";
+			cout<<"chan no of d "<<d.tmpoch()<<"\n";
+	system("pause");
 	
 	/*
 	if(n.ready())
@@ -150,7 +118,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//f.getout()->print();
 	//cout<<"\n";
 	//f.getout()->print();
-	system("pause");
+	//system("pause");
 	return 0;
 }
 // in the log in console there is a entry thread id 0 deleted

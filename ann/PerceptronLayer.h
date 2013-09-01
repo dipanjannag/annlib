@@ -79,6 +79,7 @@ public:
 		ready.store(false);
 		clearCount = 0;
 		this->_manip = nullptr;
+		this->_outChannel = NULL;
 		//this->inNet = nullptr;
 		
 	}
@@ -152,6 +153,14 @@ public:
 	{
 		this->_manip = (function< FeatureSet<T> (FeatureSet<T>) >*)(new function< FeatureSet<T> (FeatureSet<T>) >(f));
 	}
+
+	/**
+	this function will be used to change the channel of output, if it is different than output
+	*/
+	void setOutputChannel(size_t s)
+	{
+		this->_outChannel = s;
+	}
 	// perpouse of the below functions are unspecified
 	FeatureSet<T>* getout()
 	{
@@ -172,6 +181,10 @@ public:
 	T tmpchk()
 	{
 		return output[0];
+	}
+	size_t tmpoch()
+	{
+		return this->output.getChannel();
 	}
 private:
 	mutex consLock;
@@ -229,6 +242,10 @@ private:
 	/** variable to hold the formal input (not the actual input)
 	*/
 	FeatureSet<T> _forInput;
+	/**
+	variable to hold markar for outpur channel;
+	*/
+	size_t _outChannel;
 	void operator() (unsigned int ID)
 	{
 		this->id = ID;
@@ -297,13 +314,26 @@ private:
 	*/
 	inline void accumulate()
 	{
-		//this->input.clear();	//defined in FeatureSet	
 		this->_forInput.clear();
-		
+		size_t _inpChanD = NULL;
 		for(int i(0);i<connectsFrom.size();i++)
 		{
-			_forInput.insert(_forInput.begin(),connectsFrom.at(i)->output.begin(),connectsFrom.at(i)->output.end());
 
+			if(_inpChanD==NULL)
+			{
+				_inpChanD = connectsFrom.at(i)->output.getChannel();
+			}
+#if DEBUG_LEVEL > 0
+			else
+			{
+				if(_inpChanD!= connectsFrom.at(i)->output.getChannel())
+				{
+					cout<<"unequal channel\n";
+				}
+			}
+#endif
+			_forInput.setChannel(_inpChanD);
+			_forInput.insert(_forInput.begin(),connectsFrom.at(i)->output.begin(),connectsFrom.at(i)->output.end());
 			{
 				connectsFrom.at(i)->clear();
 				lock_guard<mutex> lgMutex(threadPoolMutex);
@@ -311,6 +341,7 @@ private:
 				try{
 					if(connectsFrom.at(i)->inThread.load()!=NULL)
 					{
+						threadPool.at(tmppp)->get() ;
 						delete threadPool.at(tmppp);
 						threadPool.erase(tmppp);
 					}
@@ -343,10 +374,6 @@ private:
 	/** this function creates the output of the current layer */
 	void calculate()
 	{
-		
-		//this->output.clear();
-		//this->output = this->input;
-		
 #ifdef USE_AMP
 		//input.assign(inpDim,0);
 		{
@@ -365,8 +392,29 @@ private:
 			out.synchronize();
 		}
 		this->ready.store(true);
+		cout<<this->input.getChannel()<<"\n";
+		if(this->_outChannel!=NULL)
+			this->output.setChannel(this->_outChannel);
+		else
+		{
+			this->output.setChannel(this->input.getChannel());
+		}
+#if DEBUG_LEVEL > 1
+		/*
+		if(this->output.size()%this->_outChannel!=0)
+		{
+			// throw some error
+		}
+		else
+		{
+			this->output.setChannel(this->input.getChannel());
+		}
+		*/
+			
 #endif
-		//this->setValid();
+#elif
+		//non amp code
+#endif
 	}
 	/** this function is called after calculate function. it checks for the entries in connectTo vector and call feed()
 		asynchronusly for all of them and create the thread table entries
@@ -445,6 +493,5 @@ private:
 	
 };
 
-//std::map<T,T2> YourClass::YourMember = std::map<T,T2>();
-map<int, future<void>* > PerceptronLayer<int>::threadPool; //= map<int, future<void>* >();
+map<int, future<void>* > PerceptronLayer<int>::threadPool;
 }

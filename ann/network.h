@@ -37,17 +37,24 @@ public:
 		}
 
 	}
+	/**
+	the network feed function
+	*/
 	void feed(FeatureSet<T> _inp)
 	{
+		//this feed is developed to support multiple layers
+		//_start._feed(_inp);
 		_start._feed(_inp);
 	}
-	void feed(vector<T> _inp)
+	void feed(vector<T> _inp,size_t _ch=1)
 	{
-		FeatureSet<T> tmp(_inp);
-		_start._feed(_inp);
+		FeatureSet<T> tmp(_inp,_ch);
+		cout<<tmp.getChannel()<<"\n";
+		_start._feed(tmp);
 	}
 private:
 	PerceptronLayer<T>& _start;
 	vector<PerceptronLayer<T>*> _end;
+	//map<PerceptronLayer<T>&,FeatureSet<T> > _out;
 };
 }
