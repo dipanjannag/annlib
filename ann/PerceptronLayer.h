@@ -58,23 +58,13 @@ public:
 	@param uni the reference (sample) unit
 	@param _count the number of that unit in the perticular layer
 	*/
-	PerceptronLayer(unit<T> uni,size_t _count)
+	PerceptronLayer(unit<T> uni,size_t _count) : act(uni.activation())
 	{
 		this->unitDim = uni.getDim();
 		this->unitCount = _count;
 		this->inpDim = unitDim*unitCount;
 		this->outDim = unitCount;
 		feedCount = 0;
-		/*
-		manip = [](vector<FeatureSet<T> > v){
-			FeatureSet<T> temp;
-			for (int i = 0; i < v.size(); i++)
-			{
-				temp.combine(v.at(i));
-			}
-			return temp;
-		};
-		*/
 		inThread.store(NULL);
 		ready.store(false);
 		clearCount = 0;
@@ -162,6 +152,13 @@ public:
 	{
 		this->_outChannel = s;
 	}
+	/**
+	this function should be used when a brunchless neural network is being designed without network object
+	*/
+	void setid(int _id)
+	{
+		this->id = _id;
+	}
 	// perpouse of the below functions are unspecified
 	FeatureSet<T>* getout()
 	{
@@ -203,8 +200,8 @@ private:
 	size_t outDim;
 	/** basically useless */
 	vector<Perceptron<T> > members;
-	/** not implemented yet */
-	unsigned int id;
+	/** holds the the id of the current layer */
+	int id;
 	// needed to be modified
 	/** list of from link */
 	vector<PerceptronLayer<T>* > connectsTo;
@@ -251,6 +248,10 @@ private:
 	variable to hold markar for outpur channel;
 	*/
 	size_t _outChannel;
+	/**
+	variable to hold the operation to be performed
+	*/
+	const _act act;
 	void operator() (unsigned int ID)
 	{
 		this->id = ID;

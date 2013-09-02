@@ -87,6 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="calculation.h" />
+    <ClInclude Include="classifier.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="except.h" />
     <ClInclude Include="Feature.h" />
@@ -97,6 +98,10 @@
     <ClInclude Include="network.h" />
     <ClInclude Include="Perceptron.h" />
     <ClInclude Include="PerceptronLayer.h" />
+    <ClInclude Include="rapidXml\rapidxml.hpp" />
+    <ClInclude Include="rapidXml\rapidxml_iterators.hpp" />
+    <ClInclude Include="rapidXml\rapidxml_print.hpp" />
+    <ClInclude Include="rapidXml\rapidxml_utils.hpp" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="unit.h" />
