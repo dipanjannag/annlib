@@ -10,7 +10,7 @@ namespace ann{
 /** FeatureSet<T> class: basically a container of many features.
     a perceptron accepts a perceptron layer
 */
-template<typename T> class FeatureSet :public vector<T>
+template<typename T= float> class FeatureSet :public vector<T>
 {
 
 public:
@@ -65,6 +65,46 @@ public:
 	size_t getDim()
 	{
 		return this->_dim;
+	}
+	/**necessery overloads
+	*/
+	void operator+= (FeatureSet<T> _op)
+	{
+		size_t t_size = size();
+		size_t oth_size = _op.size();
+		if(t_size<=oth_size)
+		{
+			for(size_t i(0);i<t_size;i++)
+			{
+				at(i)+=_op[i];
+			}
+		}
+		else
+		{
+			for(size_t i(0);i<oth_size;i++)
+			{
+				at(i)+=_op[i];
+			}
+		}
+	}
+	void operator-= (FeatureSet<T> _op)
+	{
+		size_t t_size = size();
+		size_t oth_size = _op.size();
+		if(t_size<=oth_size)
+		{
+			for(size_t i(0);i<t_size;i++)
+			{
+				at(i)-=_op[i];
+			}
+		}
+		else
+		{
+			for(size_t i(0);i<oth_size;i++)
+			{
+				at(i)-=_op[i];
+			}
+		}
 	}
 private:
 		size_t _chan;

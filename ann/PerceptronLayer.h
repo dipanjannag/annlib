@@ -70,6 +70,7 @@ public:
 		clearCount = 0;
 		this->_manip = nullptr;
 		this->_outChannel = NULL;
+		this->_weight.assign(inpDim,1);
 		//this->inNet = nullptr;
 		
 	}
@@ -158,6 +159,16 @@ public:
 	void setid(int _id)
 	{
 		this->id = _id;
+	}
+	/**implicit conversion operator
+	*/
+	void operator= (PerceptronLayer<int> _with)
+	{
+
+	}
+	FeatureSet<T>& weight()
+	{
+		return this->_weight;
 	}
 	// perpouse of the below functions are unspecified
 	FeatureSet<T>* getout()
@@ -252,6 +263,9 @@ private:
 	variable to hold the operation to be performed
 	*/
 	const _act act;
+	/**variable to hold the current weight
+	*/
+	FeatureSet<T> _weight;
 	void operator() (unsigned int ID)
 	{
 		this->id = ID;
@@ -386,12 +400,13 @@ private:
 			output.assign(outDim,0);
 			array_view<T,1> inp(input.size(),input);
 			array_view<T,1> out(output.size(),output);
+			array_view<T,1> wght(_weight.size(),_weight);
 			int dimn = this->unitDim;
 
 			parallel_for_each(out.extent,[=](index<1> idx) restrict(amp){
 				for (int i = 0; i < dimn; i++)
 				{
-					out[idx]+=inp[(dimn*idx)+i];
+					out[idx]+=inp[(dimn*idx)+i]*wght[(dimn*idx)+i];
 				}
 			});
 			out.synchronize();
@@ -513,6 +528,6 @@ private:
 	
 	
 };
-
 map<int, future<void>* > PerceptronLayer<int>::threadPool;
+map<int, future<void>* > PerceptronLayer<float>::threadPool;
 }
