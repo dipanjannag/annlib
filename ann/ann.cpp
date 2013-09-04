@@ -16,19 +16,19 @@
 using namespace std;
 int _tmain(int argc, _TCHAR* argv[])
 {
-	/*
+	
 	unit<int> funit(3);
 			unit<int> f(2);
 			PerceptronLayer<int> a(funit,3);
 			PerceptronLayer<int> b(funit,1);
 			PerceptronLayer<int> c(funit,1);
 			PerceptronLayer<int> d(f,1);
-			*/
-			vector<float> fV;
+			
+			vector<int> fV;
 			for(int i(0);i<9;i++)
 				fV.push_back(i);
 
-/*
+
 			a.connectTo(b);
 			a.connectTo(c);
 			b.connectTo(d);
@@ -43,7 +43,8 @@ int _tmain(int argc, _TCHAR* argv[])
 			//cout<<"chan no of c "<<c.tmpoch()<<"\n";
 			auto ttf = d.getO();
 			cout<<"dim is "<<ttf.getChannel()<<"\n";
-			*/
+			
+			/*
 			FeatureSet<float> fts(fV);
 			normalize(fts);
 			for(int i(0);i<fts.size();i++)
@@ -59,6 +60,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			ftrn.push_back(a1);
 			ftrn.push_back(b1);
 			cl.trnFeed(ftrn);
+			*/
 	system("pause");
 	return 0;
 }

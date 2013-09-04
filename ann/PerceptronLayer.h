@@ -51,7 +51,7 @@ public:
 		ready.store(false);
 		clearCount = 0;
 		this->_manip = nullptr;
-		
+		this->id = -1;	
 	}
 	/**
 	this function will create a perceptronlayer from a example unit and the no of that unit
@@ -71,6 +71,7 @@ public:
 		this->_manip = nullptr;
 		this->_outChannel = NULL;
 		this->_weight.assign(inpDim,1);
+		this->id = -1;
 		//this->inNet = nullptr;
 		
 	}
@@ -155,6 +156,8 @@ public:
 	}
 	/**
 	this function should be used when a brunchless neural network is being designed without network object
+	 review (5.9.2013 1:11pm) why only in case of brunchless network it should be use
+	 new use in network id setting
 	*/
 	void setid(int _id)
 	{
@@ -169,6 +172,30 @@ public:
 	FeatureSet<T>& weight()
 	{
 		return this->_weight;
+	}
+	void _setIdwrtThis()
+	{
+		size_t cId(0);
+		stack<PerceptronLayer<T>* > idstck;
+		setid(cId++);
+		for(size_t i(0);i<connectsTo.size();i++)
+		{
+			idstck.push(connectsTo[i]);
+		}
+		while (true)
+		{
+			
+			if(idstck.empty())
+				break;
+			auto tmp = idstck.top();
+			idstck.pop();
+			if(tmp->id==-1)
+				tmp->setid(cId++);
+			for(size_t i(0);i<tmp->connectsTo.size();i++)
+			{
+				idstck.push(tmp->connectsTo[i]);
+			}
+		}
 	}
 	// perpouse of the below functions are unspecified
 	FeatureSet<T>* getout()

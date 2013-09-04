@@ -13,8 +13,7 @@ template<typename T> class network
 public:
 	network(PerceptronLayer<T>& _initl) : _start(_initl)
 	{
-		//_count=0;
-		//_currReady=0;
+		this->_identify();
 	}
 	void addEndPoint(PerceptronLayer<T>& _endl)
 	{
@@ -61,6 +60,9 @@ public:
 private:
 	PerceptronLayer<T>& _start;
 	vector<PerceptronLayer<T>*> _end;
-	//map<PerceptronLayer<T>&,FeatureSet<T> > _out;
+	void _identify()
+	{
+		_start._setIdwrtThis();
+	}
 };
 }
