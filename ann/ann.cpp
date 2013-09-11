@@ -19,30 +19,37 @@ int _tmain(int argc, _TCHAR* argv[])
 	
 	unit<int> funit(3);
 			unit<int> f(2);
+			unit<int> fut(1);
 			PerceptronLayer<int> a(funit,3);
 			PerceptronLayer<int> b(funit,1);
 			PerceptronLayer<int> c(funit,1);
-			PerceptronLayer<int> d(f,1);
-			
+			PerceptronLayer<int> d(fut,2);
+			PerceptronLayer<int> e(f,1);
+			PerceptronLayer<int> fl(f,1);
+			PerceptronLayer<int> g(f,1);
 			vector<int> fV;
 			for(int i(0);i<9;i++)
 				fV.push_back(i);
-
-
 			a.connectTo(b);
 			a.connectTo(c);
 			b.connectTo(d);
 			c.connectTo(d);
+			d.connectTo(e);
+			d.connectTo(fl);
+			fl.connectTo(g);
+			e.connectTo(g);
 			network<int> n(a);
-			n.addEndPoint(d);
+			n.addEndPoint(g);
+			n.feed(fV);
 			//n.feed(fV,3);
-			n.feed(fV,3);
+			//n.feed(fV,3);
+			n.init();
 			n.makeReady();
 			//cout<<"chan no of a "<<a.tmpoch()<<"\n";
 			//cout<<"chan no of b "<<b.tmpoch()<<"\n";
 			//cout<<"chan no of c "<<c.tmpoch()<<"\n";
-			auto ttf = d.getO();
-			cout<<"dim is "<<ttf.getChannel()<<"\n";
+			//auto ttf = d.getO();
+			//cout<<"dim is "<<ttf.getChannel()<<"\n";
 			
 			/*
 			FeatureSet<float> fts(fV);

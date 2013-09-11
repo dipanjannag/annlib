@@ -2,10 +2,14 @@
 #include <vector>
 #include "PerceptronLayer.h"
 #include "FeatureSet.h"
+#include "rapidXml\rapidxml.hpp"
+#include "rapidXml\rapidxml_print.hpp"
+#include <fstream>
 #include <atomic>
 
 using namespace std;
 using namespace ann;
+using namespace rapidxml;
 namespace ann{
 template<typename T> class network
 {
@@ -34,7 +38,29 @@ public:
 				this_thread::yield();
 			}
 		}
+		_start.threadCleanUp();
 
+	}
+	/**
+	this function will store the current weight. Means it'll create the file if not exists
+	otherwise loads it
+	*/
+	void init()
+	{
+		ifstream _dta("tmpp.netx");
+		if(_dta.is_open())
+		{
+			cout<<"file is available";
+		}
+		else
+		{
+			_dta.close();
+			xml_document<>* __rootDoc = _start.serilizeWrtThis();
+			ofstream _data("tmp.netx");
+			_data<<*(__rootDoc);
+			_data.close();
+			_start.cacheCleanUp();
+		}
 	}
 	/**
 	the network feed function
@@ -48,13 +74,17 @@ public:
 	void feed(vector<T> _inp)
 	{
 		FeatureSet<T> tmp(_inp);
+#ifdef CONSOLE_DEBUG
 		cout<<tmp.getChannel()<<"\n";
+#endif
 		_start._feed(tmp);
 	}
 	void feed(vector<T> _inp,size_t _ch)
 	{
 		FeatureSet<T> tmp(_inp,_ch);
+#ifdef CONSOLE_DEBUG
 		cout<<tmp.getChannel()<<"\n";
+#endif
 		_start._feed(tmp);
 	}
 private:

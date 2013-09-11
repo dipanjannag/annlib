@@ -16,8 +16,12 @@
 #include <ctime>
 #include <atomic>
 #include <iostream>
+#include <string>
 #include "except.h"
 #include "config.h"
+#include "utility.h"
+#include "rapidXml\rapidxml.hpp"
+#include "rapidXml\rapidxml_print.hpp"
 #ifdef USE_AMP
 #include <amp.h>
 #include <amp_math.h>
@@ -25,6 +29,7 @@ using namespace concurrency;
 #endif
 typedef pair<int, future<void> > tEntry;
 using namespace std;
+using namespace rapidxml;
 using namespace ann;
 
 namespace ann{
@@ -72,6 +77,7 @@ public:
 		this->_outChannel = NULL;
 		this->_weight.assign(inpDim,1);
 		this->id = -1;
+		this->_serFlag = false;
 		//this->inNet = nullptr;
 		
 	}
@@ -95,7 +101,9 @@ public:
 	void _feed(FeatureSet<T> _inp)
 	{
 		this->input = _inp;
+#ifdef CONSOLE_DEBUG
 		cout<<"first feed channel "<< this->input.getChannel()<<"\n";
+#endif
 		this->calculate();
 		this->propagate();
 	}
@@ -173,6 +181,7 @@ public:
 	{
 		return this->_weight;
 	}
+
 	void _setIdwrtThis()
 	{
 		size_t cId(0);
@@ -196,6 +205,110 @@ public:
 				idstck.push(tmp->connectsTo[i]);
 			}
 		}
+	}
+	/**
+	this function do the serilization of all connected layers wrt the current layer....
+	*/
+	xml_document<>* serilizeWrtThis()
+	{
+		xml_document<>* _ret= new xml_document<>();
+		xml_node<>* __lyrNode = _ret->allocate_node(node_element,"layer");
+		_cache.push_back(new string(to_string(this->id)));
+		size_t _idIdx = _cache.size()-1;
+		xml_attribute<>* __idAttr = _ret->allocate_attribute("id",this->_cache.at(_idIdx)->c_str());
+		__lyrNode->append_attribute(__idAttr);
+		xml_attribute<>* __actAttribute = _ret->allocate_attribute("activation","abcd");
+		__lyrNode->append_attribute(__actAttribute);
+		xml_attribute<>* __dim = _ret->allocate_attribute("dim","pqrs");
+		__lyrNode->append_attribute(__dim);
+		_cache.push_back(new string());
+		size_t _wetIdx = _cache.size()-1;
+		if(this->_weight.size()!=0)
+		{
+			_cache.at(_wetIdx)->append(to_string(this->_weight[0]));
+		}
+		for(size_t i(1);i<this->_weight.size();i++)
+		{
+			_cache.at(_wetIdx)->append(",");
+			_cache.at(_wetIdx)->append(to_string(this->_weight[i]));
+		}
+		xml_attribute<>* _s_weight = _ret->allocate_attribute("weight",_cache.at(_wetIdx)->c_str());
+		__lyrNode->append_attribute(_s_weight);
+		_ret->append_node(__lyrNode);
+		stack<PerceptronLayer<T>*> serStck;
+		for(size_t i(0);i<connectsTo.size();i++)
+		{
+			serStck.push(connectsTo[i]);
+		}
+		while (true)
+		{
+			if(serStck.empty())
+			{
+				this->serilizationComplete();
+				break;
+			}
+			auto _crntLayer = serStck.top();
+			serStck.pop();
+			for(size_t i(0);i<_crntLayer->connectsTo.size();i++)
+			{
+				serStck.push(_crntLayer->connectsTo[i]);
+			}
+			if(!_crntLayer->isSerilized())
+			{
+				
+				xml_node<>* _lyrNode = _ret->allocate_node(node_element,"layer");
+				_crntLayer->_cache.push_back(new string(to_string(_crntLayer->id)));
+				size_t __idIdx = _crntLayer->_cache.size()-1;
+				xml_attribute<>* _idAttr = _ret->allocate_attribute("id",_crntLayer->_cache.at(__idIdx)->c_str());
+				_lyrNode->append_attribute(_idAttr);
+				xml_attribute<>* _actAttribute = _ret->allocate_attribute("activation"/*,value here*/);
+				_lyrNode->append_attribute(_actAttribute);
+				xml_attribute<>* _dim = _ret->allocate_attribute("dim"/*, value here*/);
+				_lyrNode->append_attribute(_dim);
+				_crntLayer->_cache.push_back(new string());
+				size_t __wetIdx = _crntLayer->_cache.size()-1;
+				if(_crntLayer->_weight.size()!=0)
+				{
+					_crntLayer->_cache.at(__wetIdx)->append(to_string(_crntLayer->_weight[0]));
+				}
+				for(size_t i(1);i<_crntLayer->_weight.size();i++)
+				{
+					_crntLayer->_cache.at(__wetIdx)->append(",");
+					_crntLayer->_cache.at(__wetIdx)->append(to_string(_crntLayer->_weight[i]));
+				}
+				xml_attribute<>* s_weight = _ret->allocate_attribute("weight",_crntLayer->_cache.at(__wetIdx)->c_str());
+				_lyrNode->append_attribute(s_weight);
+				_ret->append_node(_lyrNode);
+				_crntLayer->serilized();
+			}
+		}
+		return _ret;
+	}
+	/**
+	function to clear serilization cache..... required to be called by network....
+	*/
+	void cacheCleanUp()
+	{
+		_cache.clear();
+	}
+	/**
+	function to cleanup future containers
+	*/
+	void threadCleanUp()
+	{
+		for(int i(0);i<_futBeen.size();i++)
+		{
+			try{
+			delete _futBeen.at(i);
+			}
+			catch(exception e)
+			{
+#ifdef CONSOLE_DEBUG
+				cout<<e.what()<<"\n";
+#endif
+			}
+		}
+		_futBeen.clear();
 	}
 	// perpouse of the below functions are unspecified
 	FeatureSet<T>* getout()
@@ -293,6 +406,18 @@ private:
 	/**variable to hold the current weight
 	*/
 	FeatureSet<T> _weight;
+	/**
+	flag to hold the serilization state
+	*/
+	bool _serFlag;
+	/**
+	variable to keep the serilization variable alive
+	*/
+	vector<string*> _cache;
+	/**
+	container to hold future wasteBeen
+	*/
+	static vector<future<void>* > _futBeen; 
 	void operator() (unsigned int ID)
 	{
 		this->id = ID;
@@ -332,6 +457,7 @@ private:
 				{
 						lock_guard<mutex> thrdPoollockG(threadPoolMutex);
 						threadPool.at(temp->inThread.load())->wait();
+						
 				}
 			}
 			else
@@ -387,8 +513,14 @@ private:
 				try{
 					if(connectsFrom.at(i)->inThread.load()!=NULL)
 					{
-						threadPool.at(tmppp)->get() ;
-						delete threadPool.at(tmppp);
+						auto locRef = threadPool.at(tmppp);
+						
+						if(locRef->valid())
+						{
+							locRef->get() ;
+						}
+						
+						_futBeen.push_back(locRef);
 						threadPool.erase(tmppp);
 					}
 					else
@@ -398,9 +530,11 @@ private:
 				}
 				catch(exception e)
 				{
+#ifdef CONSOLE_DEBUG
 					consLock.lock();
 					cout<<e.what()<<"\n";
 					consLock.unlock();
+#endif
 				}
 			}
 			connectsFrom.at(i)->feedCount = 0;
@@ -438,7 +572,9 @@ private:
 			});
 			out.synchronize();
 		}
+#ifdef CONSOLE_DEBUG
 		cout<<this->input.getChannel()<<"\n";
+#endif
 		if(this->_outChannel!=NULL)
 		{
 #if DEBUG_LEVEL >1
@@ -496,9 +632,11 @@ private:
 				}
 				catch(exception e)
 				{
+#ifdef CONSOLE_DEBUG
 					consLock.lock();
 					cout<<e.what()<<"\n";
 					consLock.unlock();
+#endif
 				}
 			}
 			connectsTo.at(i)->inThread.store(temp);
@@ -552,9 +690,50 @@ private:
 		}
 
 	}
+	/**
+	sets the serilization flag true
+	*/
+	void serilized()
+	{
+		this->_serFlag = true;
+	}
+	/**
+	returns the current state of the serilization state
+	*/
+	bool isSerilized()
+	{
+		return this->_serFlag;
+	}
+	/**
+	sets the serilization flage of whole network false
+	*/
+	void serilizationComplete()
+	{
+		this->_serFlag = false;
+		stack<PerceptronLayer<T>*> serMarker;
+		for(size_t i(0);i<this->connectsTo.size();i++)
+		{
+			serMarker.push(this->connectsTo[i]);
+		}
+		while (true)
+		{
+			if(serMarker.empty())
+				break;
+			auto _tLayer = serMarker.top();
+			serMarker.pop();
+			for(size_t i(0);i<_tLayer->connectsTo.size();i++)
+			{
+				serMarker.push(_tLayer->connectsTo[i]);
+			}
+			_tLayer->_serFlag = false;
+			
+		}
+	}
 	
 	
 };
 map<int, future<void>* > PerceptronLayer<int>::threadPool;
 map<int, future<void>* > PerceptronLayer<float>::threadPool;
+vector<future<void>* > PerceptronLayer<int>::_futBeen; 
+vector<future<void>* > PerceptronLayer<float>::_futBeen;
 }
