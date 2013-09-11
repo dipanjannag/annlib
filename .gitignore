@@ -243,3 +243,4 @@ Debug/
 Release/
 TestResults/
 Client/
+*.netx
