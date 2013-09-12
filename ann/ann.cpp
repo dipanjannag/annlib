@@ -12,10 +12,14 @@
 #include <functional>
 #include <future>
 #include <thread>
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
 
 using namespace std;
 int _tmain(int argc, _TCHAR* argv[])
 {
+
 	
 	unit<int> funit(3);
 			unit<int> f(2);
@@ -68,7 +72,8 @@ int _tmain(int argc, _TCHAR* argv[])
 			ftrn.push_back(b1);
 			cl.trnFeed(ftrn);
 			*/
-	system("pause");
+	//system("pause");
+	_CrtDumpMemoryLeaks();
 	return 0;
 }
 // in the log in console there is a entry thread id 0 deleted

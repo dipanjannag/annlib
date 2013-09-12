@@ -1,5 +1,6 @@
 // TODO: final implementation and cleanUp
 // TODO: implementation of proper destructor
+// TODO: deserilizer,
 
 #pragma once
 #include <vector>
@@ -285,11 +286,32 @@ public:
 		return _ret;
 	}
 	/**
+	function to deserilize the network wrt this network
+	*/
+	void deserilizeWrtThis(xml_document<>* doc)
+	{
+	}
+	/**
 	function to clear serilization cache..... required to be called by network....
 	*/
 	void cacheCleanUp()
 	{
-		_cache.clear();
+		stack<PerceptronLayer<T>*> btrack;
+		btrack.push(this);
+		while (true)
+		{
+			if (btrack.empty())
+			{
+				break;
+			}
+			auto tmp = btrack.top();
+			btrack.pop();
+			tmp->_cache.clear();
+			for (int i = 0; i < tmp->connectsTo.size(); i++)
+			{
+				btrack.push(tmp->connectsTo[i]);
+			}
+		}
 	}
 	/**
 	function to cleanup future containers
@@ -497,7 +519,7 @@ private:
 		for(int i(0);i<connectsFrom.size();i++)
 		{
 
-			_forInput.insert(_forInput.begin(),connectsFrom.at(i)->output.begin(),connectsFrom.at(i)->output.end());
+			this->_forInput.insert(_forInput.begin(),connectsFrom.at(i)->output.begin(),connectsFrom.at(i)->output.end());
 			if(connectsFrom.size()!=0) // in ==0 case this function won't be called :D
 				_forInput.setChannel(connectsFrom[0]->output.getChannel());
 #if DEBUG_LEVEL >0
@@ -513,15 +535,26 @@ private:
 				try{
 					if(connectsFrom.at(i)->inThread.load()!=NULL)
 					{
-						auto locRef = threadPool.at(tmppp);
+						if(threadPool.find(tmppp)!=threadPool.end())
+						{
+							auto locRef = threadPool.at(tmppp);
+							if(locRef->valid())
+							{
+								locRef->get() ;
+							}
+							_futBeen.push_back(locRef);
+							threadPool.erase(tmppp);
+						}
 						
+						/*
 						if(locRef->valid())
 						{
 							locRef->get() ;
 						}
+						*/
+						//_futBeen.push_back(locRef);
 						
-						_futBeen.push_back(locRef);
-						threadPool.erase(tmppp);
+							
 					}
 					else
 					{
