@@ -24,6 +24,33 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="fann.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="floatfann.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fann_error.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fann_activation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fann_data.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fann_internal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fann_train.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fann_io.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fann_cascade.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

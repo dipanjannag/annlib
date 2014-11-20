@@ -68,7 +68,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\fann\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
@@ -87,6 +87,15 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="fann.h" />
+    <ClInclude Include="fann_activation.h" />
+    <ClInclude Include="fann_cascade.h" />
+    <ClInclude Include="fann_data.h" />
+    <ClInclude Include="fann_error.h" />
+    <ClInclude Include="fann_internal.h" />
+    <ClInclude Include="fann_io.h" />
+    <ClInclude Include="fann_train.h" />
+    <ClInclude Include="floatfann.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
