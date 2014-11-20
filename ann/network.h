@@ -15,37 +15,48 @@ template<typename T> class network
 {
 	//friend void PerceptronLayer<T>::setReadyFlag();
 public:
-	network(PerceptronLayer<T>& _initl) : _start(_initl)
+	network(PerceptronLayer<T>& _initl, PerceptronLayer<T>& _endl) : _start(_initl), _end(_endl)
 	{
 		this->_identify();
+		/*_end.push_back(_endl.data());
+		_end.push_back(_endl.data());
+		_end.at(0) = _end[0];*/
 	}
 	void addEndPoint(PerceptronLayer<T>& _endl)
 	{
 		//_end.push_back(_endl);
 		//_endl.setNetwork((void*) this);
-		_end.push_back(_endl.data());
+		/*_end.push_back(_endl.data());
+		_end.at(0) = _end[0];*/
 	}
-	void makeReady()
+	volatile void makeReady()
 	{
-		for(int i(0);i<_end.size();i++)
+		while (true)
 		{
-			while (true)
+			if (_end.isReady())
 			{
-				if (_end.at(i)->isReady())
-				{
-					break;
-				}
-				this_thread::yield();
+				break;
 			}
+			this_thread::yield();
 		}
 		//_start.threadCleanUp();
 
+	}
+	vector<T>* subscribe()
+	{
+		vector<T>* cont = new vector<T>();
+		_end.subscriber = cont;
+		while (cont->size()==0)
+		{
+			this_thread::yield();
+		}
+		return cont;
 	}
 	/**
 	this function will store the current weight. Means it'll create the file if not exists
 	otherwise loads it
 	*/
-	void init()
+	/*void init()
 	{
 		ifstream _dta("tmpp.netx");
 		if(_dta.is_open())
@@ -61,7 +72,7 @@ public:
 			_data.close();
 			_start.cacheCleanUp();
 		}
-	}
+	}*/
 	/**
 	the network feed function
 	*/
@@ -87,12 +98,14 @@ public:
 #endif
 		_start._feed(tmp);
 	}
+	string name = "dickhead";
 private:
 	PerceptronLayer<T>& _start;
-	vector<PerceptronLayer<T>*> _end;
+	PerceptronLayer<T>& _end;
 	void _identify()
 	{
 		_start._setIdwrtThis();
 	}
+	
 };
 }

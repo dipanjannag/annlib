@@ -58,15 +58,17 @@ public:
 		clearCount = 0;
 		this->_manip = nullptr;
 		this->id = -1;	
+		subscriber = nullptr;
 	}
 	/**
 	this function will create a perceptronlayer from a example unit and the no of that unit
 	@param uni the reference (sample) unit
 	@param _count the number of that unit in the perticular layer
 	*/
-	PerceptronLayer(unit<T> uni,size_t _count) : act(uni.activation())
+	PerceptronLayer(unit<T> uni, size_t _count) : act(uni.activation()), unitDim(uni.getDim())
 	{
-		this->unitDim = uni.getDim();
+		subscriber = nullptr;
+		//this->unitDim = uni.getDim();
 		this->unitCount = _count;
 		this->inpDim = unitDim*unitCount;
 		this->outDim = unitCount;
@@ -79,6 +81,7 @@ public:
 		this->_weight.assign(inpDim,1);
 		this->id = -1;
 		this->_serFlag = false;
+		this->output.assign(unitDim, 0);
 		//this->inNet = nullptr;
 		
 	}
@@ -101,6 +104,10 @@ public:
 	*/
 	void _feed(FeatureSet<T> _inp)
 	{
+#ifdef CONSOLE_DEBUG
+		ANN_LOG("layer " + to_string(this->id) + " is fed " + to_string(_inp.size()) + " no of input", this->global_console_lock)
+		ANN_LOG("starting calculation", this->global_console_lock)
+#endif
 		this->input = _inp;
 #ifdef CONSOLE_DEBUG
 		cout<<"first feed channel "<< this->input.getChannel()<<"\n";
@@ -144,7 +151,7 @@ public:
 	}
 	/** this function in called in network object to find if the layer is ready
 	*/
-	bool isReady()
+	bool isReady() const
 	{
 		return this->ready.load();
 	}
@@ -185,6 +192,9 @@ public:
 
 	void _setIdwrtThis()
 	{
+#ifdef CONSOLE_DEBUG
+		ANN_LOG("***layer identifying started***", this->global_console_lock)
+#endif
 		size_t cId(0);
 		stack<PerceptronLayer<T>* > idstck;
 		setid(cId++);
@@ -206,91 +216,94 @@ public:
 				idstck.push(tmp->connectsTo[i]);
 			}
 		}
+#ifdef CONSOLE_DEBUG
+		ANN_LOG( to_string(cId) + " layer id'ed", this->global_console_lock)
+#endif
 	}
 	/**
 	this function do the serilization of all connected layers wrt the current layer....
 	*/
-	xml_document<>* serilizeWrtThis()
-	{
-		xml_document<>* _ret= new xml_document<>();
-		xml_node<>* __lyrNode = _ret->allocate_node(node_element,"layer");
-		_cache.push_back(new string(to_string(this->id)));
-		size_t _idIdx = _cache.size()-1;
-		xml_attribute<>* __idAttr = _ret->allocate_attribute("id",this->_cache.at(_idIdx)->c_str());
-		__lyrNode->append_attribute(__idAttr);
-		xml_attribute<>* __actAttribute = _ret->allocate_attribute("activation","abcd");
-		__lyrNode->append_attribute(__actAttribute);
-		xml_attribute<>* __dim = _ret->allocate_attribute("dim","pqrs");
-		__lyrNode->append_attribute(__dim);
-		_cache.push_back(new string());
-		size_t _wetIdx = _cache.size()-1;
-		if(this->_weight.size()!=0)
-		{
-			_cache.at(_wetIdx)->append(to_string(this->_weight[0]));
-		}
-		for(size_t i(1);i<this->_weight.size();i++)
-		{
-			_cache.at(_wetIdx)->append(",");
-			_cache.at(_wetIdx)->append(to_string(this->_weight[i]));
-		}
-		xml_attribute<>* _s_weight = _ret->allocate_attribute("weight",_cache.at(_wetIdx)->c_str());
-		__lyrNode->append_attribute(_s_weight);
-		_ret->append_node(__lyrNode);
-		stack<PerceptronLayer<T>*> serStck;
-		for(size_t i(0);i<connectsTo.size();i++)
-		{
-			serStck.push(connectsTo[i]);
-		}
-		while (true)
-		{
-			if(serStck.empty())
-			{
-				this->serilizationComplete();
-				break;
-			}
-			auto _crntLayer = serStck.top();
-			serStck.pop();
-			for(size_t i(0);i<_crntLayer->connectsTo.size();i++)
-			{
-				serStck.push(_crntLayer->connectsTo[i]);
-			}
-			if(!_crntLayer->isSerilized())
-			{
-				
-				xml_node<>* _lyrNode = _ret->allocate_node(node_element,"layer");
-				_crntLayer->_cache.push_back(new string(to_string(_crntLayer->id)));
-				size_t __idIdx = _crntLayer->_cache.size()-1;
-				xml_attribute<>* _idAttr = _ret->allocate_attribute("id",_crntLayer->_cache.at(__idIdx)->c_str());
-				_lyrNode->append_attribute(_idAttr);
-				xml_attribute<>* _actAttribute = _ret->allocate_attribute("activation"/*,value here*/);
-				_lyrNode->append_attribute(_actAttribute);
-				xml_attribute<>* _dim = _ret->allocate_attribute("dim"/*, value here*/);
-				_lyrNode->append_attribute(_dim);
-				_crntLayer->_cache.push_back(new string());
-				size_t __wetIdx = _crntLayer->_cache.size()-1;
-				if(_crntLayer->_weight.size()!=0)
-				{
-					_crntLayer->_cache.at(__wetIdx)->append(to_string(_crntLayer->_weight[0]));
-				}
-				for(size_t i(1);i<_crntLayer->_weight.size();i++)
-				{
-					_crntLayer->_cache.at(__wetIdx)->append(",");
-					_crntLayer->_cache.at(__wetIdx)->append(to_string(_crntLayer->_weight[i]));
-				}
-				xml_attribute<>* s_weight = _ret->allocate_attribute("weight",_crntLayer->_cache.at(__wetIdx)->c_str());
-				_lyrNode->append_attribute(s_weight);
-				_ret->append_node(_lyrNode);
-				_crntLayer->serilized();
-			}
-		}
-		return _ret;
-	}
+	//xml_document<>* serilizeWrtThis()
+	//{
+	//	xml_document<>* _ret= new xml_document<>();
+	//	xml_node<>* __lyrNode = _ret->allocate_node(node_element,"layer");
+	//	_cache.push_back(new string(to_string(this->id)));
+	//	size_t _idIdx = _cache.size()-1;
+	//	xml_attribute<>* __idAttr = _ret->allocate_attribute("id",this->_cache.at(_idIdx)->c_str());
+	//	__lyrNode->append_attribute(__idAttr);
+	//	xml_attribute<>* __actAttribute = _ret->allocate_attribute("activation","abcd");
+	//	__lyrNode->append_attribute(__actAttribute);
+	//	xml_attribute<>* __dim = _ret->allocate_attribute("dim","pqrs");
+	//	__lyrNode->append_attribute(__dim);
+	//	_cache.push_back(new string());
+	//	size_t _wetIdx = _cache.size()-1;
+	//	if(this->_weight.size()!=0)
+	//	{
+	//		_cache.at(_wetIdx)->append(to_string(this->_weight[0]));
+	//	}
+	//	for(size_t i(1);i<this->_weight.size();i++)
+	//	{
+	//		_cache.at(_wetIdx)->append(",");
+	//		_cache.at(_wetIdx)->append(to_string(this->_weight[i]));
+	//	}
+	//	xml_attribute<>* _s_weight = _ret->allocate_attribute("weight",_cache.at(_wetIdx)->c_str());
+	//	__lyrNode->append_attribute(_s_weight);
+	//	_ret->append_node(__lyrNode);
+	//	stack<PerceptronLayer<T>*> serStck;
+	//	for(size_t i(0);i<connectsTo.size();i++)
+	//	{
+	//		serStck.push(connectsTo[i]);
+	//	}
+	//	while (true)
+	//	{
+	//		if(serStck.empty())
+	//		{
+	//			this->serilizationComplete();
+	//			break;
+	//		}
+	//		auto _crntLayer = serStck.top();
+	//		serStck.pop();
+	//		for(size_t i(0);i<_crntLayer->connectsTo.size();i++)
+	//		{
+	//			serStck.push(_crntLayer->connectsTo[i]);
+	//		}
+	//		if(!_crntLayer->isSerilized())
+	//		{
+	//			
+	//			xml_node<>* _lyrNode = _ret->allocate_node(node_element,"layer");
+	//			_crntLayer->_cache.push_back(new string(to_string(_crntLayer->id)));
+	//			size_t __idIdx = _crntLayer->_cache.size()-1;
+	//			xml_attribute<>* _idAttr = _ret->allocate_attribute("id",_crntLayer->_cache.at(__idIdx)->c_str());
+	//			_lyrNode->append_attribute(_idAttr);
+	//			xml_attribute<>* _actAttribute = _ret->allocate_attribute("activation"/*,value here*/);
+	//			_lyrNode->append_attribute(_actAttribute);
+	//			xml_attribute<>* _dim = _ret->allocate_attribute("dim"/*, value here*/);
+	//			_lyrNode->append_attribute(_dim);
+	//			_crntLayer->_cache.push_back(new string());
+	//			size_t __wetIdx = _crntLayer->_cache.size()-1;
+	//			if(_crntLayer->_weight.size()!=0)
+	//			{
+	//				_crntLayer->_cache.at(__wetIdx)->append(to_string(_crntLayer->_weight[0]));
+	//			}
+	//			for(size_t i(1);i<_crntLayer->_weight.size();i++)
+	//			{
+	//				_crntLayer->_cache.at(__wetIdx)->append(",");
+	//				_crntLayer->_cache.at(__wetIdx)->append(to_string(_crntLayer->_weight[i]));
+	//			}
+	//			xml_attribute<>* s_weight = _ret->allocate_attribute("weight",_crntLayer->_cache.at(__wetIdx)->c_str());
+	//			_lyrNode->append_attribute(s_weight);
+	//			_ret->append_node(_lyrNode);
+	//			_crntLayer->serilized();
+	//		}
+	//	}
+	//	return _ret;
+	//}
 	/**
 	function to deserilize the network wrt this network
 	*/
-	void deserilizeWrtThis(xml_document<>* doc)
+	/*void deserilizeWrtThis(xml_document<>* doc)
 	{
-	}
+	}*/
 	/**
 	function to clear serilization cache..... required to be called by network....
 	*/
@@ -313,6 +326,12 @@ public:
 			}
 		}
 	}
+
+	void subscribe(vector<T>* func)
+	{
+		subscriber = func;
+	}
+
 	/**
 	function to cleanup future containers
 	*/
@@ -321,7 +340,7 @@ public:
 		for(int i(0);i<_futBeen.size();i++)
 		{
 			try{
-			delete _futBeen.at(i);
+			//delete _futBeen.at(i);
 			}
 			catch(exception e)
 			{
@@ -332,7 +351,7 @@ public:
 		}
 		_futBeen.clear();
 	}
-	// perpouse of the below functions are unspecified
+	// purpose of the below functions are unspecified
 	FeatureSet<T>* getout()
 	{
 		return new FeatureSet<T>(output);
@@ -361,10 +380,15 @@ public:
 	{
 		return output;
 	}
+	vector<T>* subscriber;
+	int getId() const
+	{
+		return this->id;
+	}
 private:
 	mutex consLock;
 	/** dimension of each unit*/
-	size_t unitDim;
+	const size_t unitDim;
 	/** number of unit */
 	size_t unitCount;
 	/** total input dimension*/
@@ -440,6 +464,12 @@ private:
 	container to hold future wasteBeen
 	*/
 	static vector<future<void>* > _futBeen; 
+
+
+	static mutex global_console_lock;
+
+
+	
 	void operator() (unsigned int ID)
 	{
 		this->id = ID;
@@ -590,20 +620,66 @@ private:
 #ifdef USE_AMP
 		//input.assign(inpDim,0);
 		{
+#ifdef CONSOLE_DEBUG
+			ANN_LOG("layer: " + to_string( this->id) + " waiting for exclusive access to gpu", this->global_console_lock);
+#endif
 			lock_guard<mutex> gpu(ampMutex);
+#ifdef CONSOLE_DEBUG
+			ANN_LOG("layer: " + to_string(this->id) + " have gpu", this->global_console_lock)
+#endif
 			output.assign(outDim,0);
 			array_view<T,1> inp(input.size(),input);
 			array_view<T,1> out(output.size(),output);
 			array_view<T,1> wght(_weight.size(),_weight);
 			int dimn = this->unitDim;
+			try{
+#ifdef CONSOLE_DEBUG
+				ANN_LOG("layer " + to_string(this->id) + " feeding <" + to_string(input.size()) + "> dimenssion input vector", this->global_console_lock)
+					ANN_LOG("expected unit dim: " + to_string(this->unitDim) +" at layer "+ to_string(this->id), this->global_console_lock)
+					ANN_LOG("output vector size before feed:" + to_string(output.size()) + " at layer " + to_string(this->id), this->global_console_lock)
+#endif
+					parallel_for_each(out.extent, [=](index<1> idx) restrict(amp){
+					for (int i = 0; i < dimn; i++)
+					{
+						out[idx] += inp[(dimn*idx) + i] * wght[(dimn*idx) + i];
+					}
 
-			parallel_for_each(out.extent,[=](index<1> idx) restrict(amp){
-				for (int i = 0; i < dimn; i++)
-				{
-					out[idx]+=inp[(dimn*idx)+i]*wght[(dimn*idx)+i];
-				}
+				});
+			}
+			catch (exception e)
+			{
+				cout<<e.what()<<"\n";
+			}
+			parallel_for_each(out.extent, [=](index<1> idx) restrict(amp){
+
+				int accuracy = 10;
+				float sum = 1.0; // initialize sum of series
+				for (int i = accuracy - 1; i > 0; --i)
+					sum = 1 + out[idx] * sum / i;
+				
+				out[idx] = 1 / (1 + (1 / sum));
 			});
+#ifdef CONSOLE_DEBUG
+			ANN_LOG("output vector size after feed: " + to_string(output.size()) + " at layer " + to_string(this->id), this->global_console_lock)
+			ANN_LOG("waiting for memory sync at layer: " + to_string(this->id), this->global_console_lock)
+#endif
 			out.synchronize();
+#ifdef CONSOLE_DEBUG
+			ANN_LOG("memory sync complete at layer " + to_string(this->id) + " output size:" + to_string(this->id), this->global_console_lock);
+#endif
+			/*for (size_t i = 0; i <output.size(); i++)
+			{
+				out[i] = 1 / (1 + (1 / epowX(i)));
+			}*/
+			this->ready.store(true);
+			if (subscriber != nullptr)
+			{
+				subscriber->clear();
+				for (size_t i = 0; i < output.size(); i++)
+				{
+					subscriber->push_back(output.at(i));
+				}
+			}
 		}
 #ifdef CONSOLE_DEBUG
 		cout<<this->input.getChannel()<<"\n";
@@ -628,7 +704,7 @@ private:
 		{
 			this->output.setChannel(this->input.getChannel());
 		}
-		this->ready.store(true);
+		
 		
 #if DEBUG_LEVEL > 1
 		/*
@@ -650,9 +726,19 @@ private:
 	/** this function is called after calculate function. it checks for the entries in connectTo vector and call feed()
 		asynchronusly for all of them and create the thread table entries
 	*/
+	float epowX(double x)
+	{
+		int accuracy = 10;
+		float sum = 1.0; // initialize sum of series
 
+		for (int i = accuracy - 1; i > 0; --i)
+			sum = 1 + x * sum / i;
+
+		return sum;
+	}
 	inline void propagate()
 	{
+		
 		//this->ready = true;
 		for(int i(0);i<connectsTo.size();i++)
 		{
@@ -765,6 +851,8 @@ private:
 	
 	
 };
+mutex PerceptronLayer<int>::global_console_lock;
+mutex PerceptronLayer<float>::global_console_lock;
 map<int, future<void>* > PerceptronLayer<int>::threadPool;
 map<int, future<void>* > PerceptronLayer<float>::threadPool;
 vector<future<void>* > PerceptronLayer<int>::_futBeen; 

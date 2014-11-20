@@ -6,6 +6,17 @@
 #include <string>
 using namespace std;
 using namespace concurrency;
+
+
+#define ANN_LOG(what, ConsoleLock)				\
+{												\
+	lock_guard<mutex> locker(ConsoleLock);		\
+	cout << what << "\n";						\
+}												\
+
 namespace ann{
+
+
+
 
 }
