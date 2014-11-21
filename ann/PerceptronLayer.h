@@ -340,7 +340,7 @@ public:
 		for(int i(0);i<_futBeen.size();i++)
 		{
 			try{
-			//delete _futBeen.at(i);
+			delete _futBeen.at(i);
 			}
 			catch(exception e)
 			{
