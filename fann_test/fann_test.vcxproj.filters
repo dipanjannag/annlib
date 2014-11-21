@@ -54,6 +54,9 @@
     <ClInclude Include="fann_cascade.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -67,5 +70,8 @@
     <Library Include="lib\fannfloat.lib">
       <Filter>lib</Filter>
     </Library>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="fannfloat.dll" />
   </ItemGroup>
 </Project>

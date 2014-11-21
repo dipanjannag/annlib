@@ -87,6 +87,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="config.h" />
     <ClInclude Include="fann.h" />
     <ClInclude Include="fann_activation.h" />
     <ClInclude Include="fann_cascade.h" />
@@ -108,6 +109,9 @@
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\fannfloat.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="fannfloat.dll" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
