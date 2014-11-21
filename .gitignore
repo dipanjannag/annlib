@@ -15,6 +15,7 @@ local.properties
 .classpath
 .settings/
 .loadpath
+fann_test/
 
 # External tool builders
 .externalToolBuilders/
