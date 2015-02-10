@@ -81,6 +81,12 @@
     <ClInclude Include="utility.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Learner.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="network_manager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

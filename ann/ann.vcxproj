@@ -95,7 +95,9 @@
     <ClInclude Include="globals.h" />
     <ClInclude Include="index.h" />
     <ClInclude Include="Iterator.h" />
+    <ClInclude Include="Learner.h" />
     <ClInclude Include="network.h" />
+    <ClInclude Include="network_manager.h" />
     <ClInclude Include="Perceptron.h" />
     <ClInclude Include="PerceptronLayer.h" />
     <ClInclude Include="rapidXml\rapidxml.hpp" />

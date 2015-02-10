@@ -113,7 +113,7 @@ public:
 		cout<<"first feed channel "<< this->input.getChannel()<<"\n";
 #endif
 		this->calculate();
-		this->propagate();
+		//this->propagate();
 	}
 
 
@@ -144,7 +144,7 @@ public:
 		if(clearCount.load()==this->connectsTo.size())
 		{
 			//this->input.clear();
-			this->output.clear();
+			//this->output.clear();
 			this->clearCount.store(0);
 			this->ready.store(false);
 		}
@@ -385,6 +385,19 @@ public:
 	{
 		return this->id;
 	}
+	size_t getOutputDimension()
+	{
+		return this->outDim;
+	}
+	size_t getInputDimension()
+	{
+		return this->unitDim;
+	}
+	size_t getUnitCount()
+	{
+		return this->unitCount;
+	}
+
 private:
 	mutex consLock;
 	/** dimension of each unit*/
@@ -548,7 +561,6 @@ private:
 
 		for(int i(0);i<connectsFrom.size();i++)
 		{
-
 			this->_forInput.insert(_forInput.begin(),connectsFrom.at(i)->output.begin(),connectsFrom.at(i)->output.end());
 			if(connectsFrom.size()!=0) // in ==0 case this function won't be called :D
 				_forInput.setChannel(connectsFrom[0]->output.getChannel());
@@ -559,11 +571,12 @@ private:
 			}
 #endif
 			{
-				connectsFrom.at(i)->clear();
+				
+				//connectsFrom.at(i)->clear();
 				lock_guard<mutex> lgMutex(threadPoolMutex);
 				auto tmppp= connectsFrom.at(i)->inThread.load() ;
 				try{
-					if(connectsFrom.at(i)->inThread.load()!=NULL)
+					if((connectsFrom.at(i)->inThread.load())!=NULL)
 					{
 						if(threadPool.find(tmppp)!=threadPool.end())
 						{
@@ -635,8 +648,8 @@ private:
 			try{
 #ifdef CONSOLE_DEBUG
 				ANN_LOG("layer " + to_string(this->id) + " feeding <" + to_string(input.size()) + "> dimenssion input vector", this->global_console_lock)
-					ANN_LOG("expected unit dim: " + to_string(this->unitDim) +" at layer "+ to_string(this->id), this->global_console_lock)
-					ANN_LOG("output vector size before feed:" + to_string(output.size()) + " at layer " + to_string(this->id), this->global_console_lock)
+				ANN_LOG("expected unit dim: " + to_string(this->unitDim) +" at layer "+ to_string(this->id), this->global_console_lock)
+				ANN_LOG("output vector size before feed:" + to_string(output.size()) + " at layer " + to_string(this->id), this->global_console_lock)
 #endif
 					parallel_for_each(out.extent, [=](index<1> idx) restrict(amp){
 					for (int i = 0; i < dimn; i++)
@@ -672,13 +685,11 @@ private:
 				out[i] = 1 / (1 + (1 / epowX(i)));
 			}*/
 			this->ready.store(true);
-			if (subscriber != nullptr)
+			if (this->connectsTo.size()!=0)
+				this->connectsTo.at(0)->_feed(this->output);
+			else
 			{
-				subscriber->clear();
-				for (size_t i = 0; i < output.size(); i++)
-				{
-					subscriber->push_back(output.at(i));
-				}
+				
 			}
 		}
 #ifdef CONSOLE_DEBUG
@@ -736,32 +747,32 @@ private:
 
 		return sum;
 	}
-	inline void propagate()
-	{
-		
-		//this->ready = true;
-		for(int i(0);i<connectsTo.size();i++)
-		{
-			auto temp = generateTid();
-			auto p = new future<void>(async(&PerceptronLayer<T>::feed,connectsTo.at(i)));
-			{
-				lock_guard<mutex> lgtpMutex(threadPoolMutex);
-				try{
-				threadPool.insert(make_pair(temp,p));
-				}
-				catch(exception e)
-				{
-#ifdef CONSOLE_DEBUG
-					consLock.lock();
-					cout<<e.what()<<"\n";
-					consLock.unlock();
-#endif
-				}
-			}
-			connectsTo.at(i)->inThread.store(temp);
-			
-		}
-	}
+//	inline void propagate()
+//	{
+//		
+//		//this->ready = true;
+//		for(int i(0);i<connectsTo.size();i++)
+//		{
+//			auto temp = generateTid();
+//			auto p = new future<void>(async(&PerceptronLayer<T>::feed,connectsTo.at(i)));
+//			{
+//				lock_guard<mutex> lgtpMutex(threadPoolMutex);
+//				try{
+//				threadPool.insert(make_pair(temp,p));
+//				}
+//				catch(exception e)
+//				{
+//#ifdef CONSOLE_DEBUG
+//					consLock.lock();
+//					cout<<e.what()<<"\n";
+//					consLock.unlock();
+//#endif
+//				}
+//			}
+//			connectsTo.at(i)->inThread.store(temp);
+//			
+//		}
+//	}
 	/** this function generates a unique (to the threadTable) id for each so that they can be retrived later.
 		This is just a helper function
 	*/
@@ -790,25 +801,19 @@ private:
 	d) feed the this->input to current processing unit
 	e) cal feed() for every unit in connectsTo vector
 	*/
-	void feed()
-	{
-		
-		if ((feedCount++) !=0)
-		{
-			// i've to remove threads.... guess it's not mandetory
-			return;
-		}
-		//input = manip(accumulate());
-		this->checkDep();
-		this->accumulate();
-		this->calculate();
-		if(connectsTo.size()!=0)
-		{
-			this->propagate();
-			
-		}
-
-	}
+	//void feed()
+	//{
+	//	
+	//	if ((feedCount++) !=0)
+	//	{
+	//		// i've to remove threads.... guess it's not mandetory
+	//		return;
+	//	}
+	//	//input = manip(accumulate());
+	//	//this->checkDep();
+	//	this->accumulate();
+	//	this->calculate();
+	//}
 	/**
 	sets the serilization flag true
 	*/

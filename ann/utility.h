@@ -15,8 +15,10 @@ using namespace concurrency;
 }												\
 
 namespace ann{
+	/**
+	Example defination language: <5,1000><2,500><5,100><100,1>
 
-
+	*/
 
 
 }

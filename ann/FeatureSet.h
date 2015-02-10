@@ -5,6 +5,8 @@
 #include <functional>
 #include <vector>
 #include <exception>
+#include <mutex>
+using namespace std;
 using namespace ann;
 namespace ann{
 /** FeatureSet<T> class: basically a container of many features.
@@ -65,6 +67,26 @@ public:
 	size_t getDim()
 	{
 		return this->_dim;
+	}
+	void append(FeatureSet<T> what, size_t count=1, bool useGpu=false, mutex* lock = new mutex())
+	{
+
+		if (useGpu)
+		{
+			{
+				//lock_guard<mutex> gpu(ampMutex);
+			}
+		}
+		else
+		{
+			for (size_t j = 0; j < count; j++)
+			{
+				for (size_t i = 0; i < what.size(); i++)
+				{
+					push_back(what.at(i));
+				}
+			}
+		}
 	}
 	/**necessery overloads
 	*/
