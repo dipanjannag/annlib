@@ -33,7 +33,17 @@ public:
 	}
 	~network_manager()
 	{
-
+		/*for (size_t i = 0; i < instances.size(); i++)
+		{
+			network<T>* target = instances.at(i);
+			delete target->_startPtr;
+			
+			for (size_t j = 0; j < target->hiddenLayers.size(); j++)
+			{
+				delete target->hiddenLayers.at(i);
+			}
+			delete target->_endPtr;
+		}*/
 	}
 private:
 	vector<network<T>* > instances;

@@ -113,7 +113,7 @@ public:
 		cout<<"first feed channel "<< this->input.getChannel()<<"\n";
 #endif
 		this->calculate();
-		//this->propagate();
+		this->propagate();
 	}
 
 
@@ -685,11 +685,13 @@ private:
 				out[i] = 1 / (1 + (1 / epowX(i)));
 			}*/
 			this->ready.store(true);
-			if (this->connectsTo.size()!=0)
-				this->connectsTo.at(0)->_feed(this->output);
-			else
+			if (subscriber != nullptr)
 			{
-				
+				subscriber->clear();
+				for (size_t i = 0; i < output.size(); i++)
+				{
+					subscriber->push_back(output.at(i));
+				}
 			}
 		}
 #ifdef CONSOLE_DEBUG
@@ -747,32 +749,32 @@ private:
 
 		return sum;
 	}
-//	inline void propagate()
-//	{
-//		
-//		//this->ready = true;
-//		for(int i(0);i<connectsTo.size();i++)
-//		{
-//			auto temp = generateTid();
-//			auto p = new future<void>(async(&PerceptronLayer<T>::feed,connectsTo.at(i)));
-//			{
-//				lock_guard<mutex> lgtpMutex(threadPoolMutex);
-//				try{
-//				threadPool.insert(make_pair(temp,p));
-//				}
-//				catch(exception e)
-//				{
-//#ifdef CONSOLE_DEBUG
-//					consLock.lock();
-//					cout<<e.what()<<"\n";
-//					consLock.unlock();
-//#endif
-//				}
-//			}
-//			connectsTo.at(i)->inThread.store(temp);
-//			
-//		}
-//	}
+	inline void propagate()
+	{
+		
+		//this->ready = true;
+		for(int i(0);i<connectsTo.size();i++)
+		{
+			auto temp = generateTid();
+			auto p = new future<void>(async(&PerceptronLayer<T>::feed,connectsTo.at(i)));
+			{
+				lock_guard<mutex> lgtpMutex(threadPoolMutex);
+				try{
+				threadPool.insert(make_pair(temp,p));
+				}
+				catch(exception e)
+				{
+#ifdef CONSOLE_DEBUG
+					consLock.lock();
+					cout<<e.what()<<"\n";
+					consLock.unlock();
+#endif
+				}
+			}
+			connectsTo.at(i)->inThread.store(temp);
+			
+		}
+	}
 	/** this function generates a unique (to the threadTable) id for each so that they can be retrived later.
 		This is just a helper function
 	*/
@@ -801,19 +803,25 @@ private:
 	d) feed the this->input to current processing unit
 	e) cal feed() for every unit in connectsTo vector
 	*/
-	//void feed()
-	//{
-	//	
-	//	if ((feedCount++) !=0)
-	//	{
-	//		// i've to remove threads.... guess it's not mandetory
-	//		return;
-	//	}
-	//	//input = manip(accumulate());
-	//	//this->checkDep();
-	//	this->accumulate();
-	//	this->calculate();
-	//}
+	void feed()
+	{
+		
+		if ((feedCount++) !=0)
+		{
+			// i've to remove threads.... guess it's not mandetory
+			return;
+		}
+		//input = manip(accumulate());
+		this->checkDep();
+		this->accumulate();
+		this->calculate();
+		if(connectsTo.size()!=0)
+		{
+			this->propagate();
+			
+		}
+
+	}
 	/**
 	sets the serilization flag true
 	*/
