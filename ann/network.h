@@ -17,23 +17,10 @@ namespace ann{
 	{
 		//friend void PerceptronLayer<T>::setReadyFlag();
 	public:
-		/*~network()
+		~network()
 		{
 			
-			try
-			{
-				if (_endPtr != nullptr)
-					delete _endPtr;
-				if (_startPtr != nullptr)
-					delete _startPtr;
-				for (size_t i = 0; i < hiddenLayers.size(); i++)
-					delete hiddenLayers.at(i);
-			}
-			catch (exception ex)
-			{
-
-			}
-		}*/
+		}
 		/*network(size_t unitCount, size_t unitDimension, size_t noHiddenLayer, size_t noOutput)
 		{
 			unit<T> start_unit(unitDimension);
@@ -187,16 +174,14 @@ namespace ann{
 		{
 			_startPtr->_setIdwrtThis();
 		}
-		vector<PerceptronLayer<T>* > hiddenLayers;
+	private:
 		PerceptronLayer<T>* _startPtr;
 		//PerceptronLayer<T> _startLayer;
 		PerceptronLayer<T>* _endPtr;
-	private:
-		
 		//PerceptronLayer<T> _endLayer;
 		
 		bool available = false;
-		
+		vector<PerceptronLayer<T>* > hiddenLayers;
 
 	};
 
