@@ -1,4 +1,4 @@
-annlib [![Build status](https://ci.appveyor.com/api/projects/status/mo5ucovr7f43y58?svg=true)](https://ci.appveyor.com/project/medeep/annlib)
+annlib [![Build status](https://ci.appveyor.com/api/projects/status/mo5ucovr7f43ye58?svg=true)](https://ci.appveyor.com/project/medeep/annlib)
 ======
 annlib aims to create c++ library for designing neural network. Currently this project has a main file to test the functionality without unittest ( though I'm trying to add more unittest ). The target is also
 set to build a executable not a shared library . this project is under construction. It uses cpu thread to handle brunched network and to calculate the result in each layer it uses C++AMP
@@ -16,6 +16,6 @@ What it currently has?
   1) It has the ability to create a network. Each brunch in network is handled in seperate thread. For computation in each layer it uses GPU ( But currently GPU is limited to windows with directx11+, as we are using c++ amp, though I personally
   want the experimental amp implementation over opencl comes into light).
   2) Some very common predefined network for something e.g. linearClassifier
-   
+  
 =========================================================================================================================
 What's more we need help. If you find anything here is cool please consider adding ( or maybe removing too) something, we will be incredibly happy to have you with us.
