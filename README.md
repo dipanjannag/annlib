@@ -16,6 +16,6 @@ What it currently has?
   1) It has the ability to create a network. Each brunch in network is handled in seperate thread. For computation in each layer it uses GPU ( But currently GPU is limited to windows with directx11+, as we are using c++ amp, though I personally
   want the experimental amp implementation over opencl comes into light).
   2) Some very common predefined network for something e.g. linearClassifier
-  
+   
 =========================================================================================================================
 What's more we need help. If you find anything here is cool please consider adding ( or maybe removing too) something, we will be incredibly happy to have you with us.
