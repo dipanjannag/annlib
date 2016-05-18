@@ -1,5 +1,7 @@
 annlib [![Build status](https://ci.appveyor.com/api/projects/status/mo5ucovr7f43ye58?svg=true)](https://ci.appveyor.com/project/medeep/annlib)
 ======
+
+[![Join the chat at https://gitter.im/medeep/annlib](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/medeep/annlib?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 annlib aims to create c++ library for designing neural network. Currently this project has a main file to test the functionality without unittest ( though I'm trying to add more unittest ). The target is also
 set to build a executable not a shared library . this project is under construction. It uses cpu thread to handle brunched network and to calculate the result in each layer it uses C++AMP
 
